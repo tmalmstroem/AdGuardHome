@@ -22,6 +22,8 @@ type clientJSON struct {
 
 	Upstreams []string `json:"upstreams"`
 
+	WhoisInfo map[string]interface{} `json:"whois_info"`
+
 	Disallowed string `json:"disallowed"`
 }
 
@@ -125,17 +127,9 @@ func clientToJSON(c *Client) clientJSON {
 	return cj
 }
 
-type clientHostJSONWithID struct {
-	IDs       []string               `json:"ids"`
-	Name      string                 `json:"name"`
-	WhoisInfo map[string]interface{} `json:"whois_info"`
-
-	Disallowed string `json:"disallowed"`
-}
-
 // Convert ClientHost object to JSON
-func clientHostToJSON(ip string, ch ClientHost) clientHostJSONWithID {
-	cj := clientHostJSONWithID{
+func clientHostToJSON(ip string, ch ClientHost) clientJSON {
+	cj := clientJSON{
 		Name: ch.Host,
 		IDs:  []string{ip},
 	}
