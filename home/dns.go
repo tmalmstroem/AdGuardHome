@@ -68,6 +68,7 @@ func initDNSServer() error {
 		DHCPServer: Context.dhcpServer,
 	}
 	Context.dnsServer = dnsforward.NewServer(p)
+	Context.clients.DNSServer = Context.dnsServer
 	dnsConfig := generateServerConfig()
 	err = Context.dnsServer.Prepare(&dnsConfig)
 	if err != nil {
