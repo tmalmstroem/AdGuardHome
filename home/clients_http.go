@@ -24,6 +24,9 @@ type clientJSON struct {
 
 	WhoisInfo map[string]interface{} `json:"whois_info"`
 
+	// * "": IP is allowed
+	// * not "", e.g. "127.0.0.0/24" - IP is disallowed by "disallowed IP list", and the string contains the matched rule (IP or CIDR)
+	// * "not-in-allowed-list" - IP is disallowed by "allowed IP list"
 	Disallowed string `json:"disallowed"`
 }
 
