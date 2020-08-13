@@ -261,12 +261,12 @@
 
 .logs__table .rt-tr {
     position: relative;
-    padding: 0 24px;
+    padding: 0 1.5rem;
 }
 
-.logs__table .rt-tr {
+.logs__table--new .rt-tr {
     position: relative;
-    padding: 0 1.5rem;
+    padding: 0;
 }
 
 .logs__table .rt-tr-group:not(:first-child) .rt-tr:before {

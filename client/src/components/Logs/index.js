@@ -27,6 +27,8 @@ import {
 } from '../../actions/queryLogs';
 import { addSuccessToast } from '../../actions/toasts';
 import './Logs.css';
+import './Test.css';
+import Example from './Test';
 
 const processContent = (data, buttonType) => Object.entries(data)
     .map(([key, value]) => {
@@ -65,6 +67,9 @@ const processContent = (data, buttonType) => Object.entries(data)
 const Logs = (props) => {
     const dispatch = useDispatch();
     const history = useHistory();
+
+    const queryLogs = useSelector((state) => state.queryLogs, shallowEqual);
+    const { allLogs } = queryLogs;
 
     const {
         response_status: response_status_url_param = '',
@@ -204,7 +209,8 @@ const Logs = (props) => {
                         processingAdditionalLogs={processingAdditionalLogs}
                         refreshLogs={refreshLogs}
                     />
-                    <Table
+                     <Example items={allLogs} />
+                     <Table
                         isLoading={isLoading}
                         setIsLoading={setIsLoading}
                         logs={logs}

@@ -2,6 +2,7 @@ import React from 'react';
 import { nanoid } from 'nanoid';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
+import { useDispatch } from 'react-redux';
 import { formatClientCell } from '../../../helpers/formatClientCell';
 import getIconTooltip from './getIconTooltip';
 import { checkFiltered } from '../../../helpers/helpers';
@@ -13,6 +14,8 @@ const getClientCell = ({
     const {
         reason, client, domain, info: { name, whois_info },
     } = row.original;
+
+    const dispatch = useDispatch();
 
     const autoClient = autoClients.find((autoClient) => autoClient.name === client);
     const source = autoClient?.source;
@@ -51,7 +54,7 @@ const getClientCell = ({
             'logs__action--detailed': isDetailed,
         });
 
-        const onClick = () => toggleBlocking(buttonType, domain);
+        const onClick = () => dispatch(toggleBlocking(buttonType, domain));
 
         return (
             <div className={buttonClass}>

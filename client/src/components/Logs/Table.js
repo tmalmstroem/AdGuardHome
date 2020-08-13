@@ -3,8 +3,7 @@ import PropTypes from 'prop-types';
 import { useTranslation, Trans } from 'react-i18next';
 import ReactTable from 'react-table';
 import classNames from 'classnames';
-import endsWith from 'lodash/endsWith';
-import escapeRegExp from 'lodash/escapeRegExp';
+import { useDispatch } from 'react-redux';
 import {
     BLOCK_ACTIONS,
     DEFAULT_SHORT_DATE_FORMAT_OPTIONS,
@@ -12,7 +11,7 @@ import {
     FILTERED_STATUS_TO_META_MAP,
     TABLE_DEFAULT_PAGE_SIZE,
     SCHEME_TO_PROTOCOL_MAP,
-    CUSTOM_FILTERING_RULES_ID, FILTERED_STATUS,
+    CUSTOM_FILTERING_RULES_ID, FILTERED_STATUS, QUERY_STATUS_COLORS,
 } from '../../helpers/constants';
 import getDateCell from './Cells/getDateCell';
 import getDomainCell from './Cells/getDomainCell';
@@ -29,6 +28,7 @@ import {
 } from '../../helpers/helpers';
 import Loading from '../ui/Loading';
 import { getSourceData } from '../../helpers/trackers/trackers';
+import { toggleBlocking } from '../../actions';
 
 const Table = (props) => {
     const {
@@ -50,41 +50,7 @@ const Table = (props) => {
     } = props;
 
     const { t } = useTranslation();
-
-    const toggleBlocking = (type, domain) => {
-        const {
-            setRules, getFilteringStatus, addSuccessToast,
-        } = props;
-        const { userRules } = filtering;
-
-        const lineEnding = !endsWith(userRules, '\n') ? '\n' : '';
-        const baseRule = `||${domain}^$important`;
-        const baseUnblocking = `@@${baseRule}`;
-
-        const blockingRule = type === BLOCK_ACTIONS.BLOCK ? baseUnblocking : baseRule;
-        const unblockingRule = type === BLOCK_ACTIONS.BLOCK ? baseRule : baseUnblocking;
-        const preparedBlockingRule = new RegExp(`(^|\n)${escapeRegExp(blockingRule)}($|\n)`);
-        const preparedUnblockingRule = new RegExp(`(^|\n)${escapeRegExp(unblockingRule)}($|\n)`);
-
-        const matchPreparedBlockingRule = userRules.match(preparedBlockingRule);
-        const matchPreparedUnblockingRule = userRules.match(preparedUnblockingRule);
-
-        if (matchPreparedBlockingRule) {
-            setRules(userRules.replace(`${blockingRule}`, ''));
-            addSuccessToast(`${t('rule_removed_from_custom_filtering_toast')}: ${blockingRule}`);
-        } else if (!matchPreparedUnblockingRule) {
-            setRules(`${userRules}${lineEnding}${unblockingRule}\n`);
-            addSuccessToast(`${t('rule_added_to_custom_filtering_toast')}: ${unblockingRule}`);
-        } else if (matchPreparedUnblockingRule) {
-            addSuccessToast(`${t('rule_added_to_custom_filtering_toast')}: ${unblockingRule}`);
-            return;
-        } else if (!matchPreparedBlockingRule) {
-            addSuccessToast(`${t('rule_removed_from_custom_filtering_toast')}: ${blockingRule}`);
-            return;
-        }
-
-        getFilteringStatus();
-    };
+    const dispatch = useDispatch();
 
     const getFilterName = (filters, whitelistFilters, filterId, t) => {
         if (filterId === CUSTOM_FILTERING_RULES_ID) {
@@ -111,7 +77,7 @@ const Table = (props) => {
         {
             Header: t('time_table_header'),
             accessor: 'time',
-            Cell: (row) => getDateCell(row, isDetailed),
+            Cell: (row) => getDateCell(row.original.time, isDetailed),
             minWidth: 70,
             maxHeight: 60,
             headerClassName: 'logs__text',
@@ -130,7 +96,6 @@ const Table = (props) => {
                     row,
                     t,
                     isDetailed,
-                    toggleBlocking,
                     autoClients,
                     dnssec_enabled,
                 });
@@ -273,7 +238,8 @@ const Table = (props) => {
                 }
 
                 const { reason } = rowInfo.original;
-                const colorClass = FILTERED_STATUS_TO_META_MAP[reason] ? FILTERED_STATUS_TO_META_MAP[reason].color : 'white';
+                const colorClass = FILTERED_STATUS_TO_META_MAP?.[reason]?.color
+                        ?? QUERY_STATUS_COLORS.WHITE;
 
                 return { className: colorClass };
             }}
@@ -321,7 +287,7 @@ const Table = (props) => {
 
                         const buttonType = isFiltered ? BLOCK_ACTIONS.UNBLOCK : BLOCK_ACTIONS.BLOCK;
                         const onToggleBlock = () => {
-                            toggleBlocking(buttonType, domain);
+                            dispatch(toggleBlocking(buttonType, domain));
                         };
 
                         const isBlockedByResponse = originalResponse.length > 0 && isBlocked;

@@ -369,42 +369,51 @@ export const RESPONSE_FILTER_QUERIES = Object.values(RESPONSE_FILTER)
         return acc;
     }, {});
 
+export const QUERY_STATUS_COLORS = {
+    BLUE: 'blue',
+    GREEN: 'green',
+    RED: 'red',
+    WHITE: 'white',
+    YELLOW: 'yellow',
+};
+
+// todo capitalize fields names
 export const FILTERED_STATUS_TO_META_MAP = {
     [FILTERED_STATUS.NOT_FILTERED_WHITE_LIST]: {
         label: RESPONSE_FILTER.ALLOWED.label,
-        color: 'green',
+        color: QUERY_STATUS_COLORS.GREEN,
     },
     [FILTERED_STATUS.NOT_FILTERED_NOT_FOUND]: {
         label: RESPONSE_FILTER.PROCESSED.label,
-        color: 'white',
+        color: QUERY_STATUS_COLORS.WHITE,
     },
     [FILTERED_STATUS.FILTERED_BLOCKED_SERVICE]: {
         label: RESPONSE_FILTER.BLOCKED.label,
-        color: 'red',
+        color: QUERY_STATUS_COLORS.RED,
     },
     [FILTERED_STATUS.FILTERED_SAFE_SEARCH]: {
         label: RESPONSE_FILTER.SAFE_SEARCH.label,
-        color: 'yellow',
+        color: QUERY_STATUS_COLORS.YELLOW,
     },
     [FILTERED_STATUS.FILTERED_BLACK_LIST]: {
         label: RESPONSE_FILTER.BLOCKED.label,
-        color: 'red',
+        color: QUERY_STATUS_COLORS.RED,
     },
     [FILTERED_STATUS.REWRITE]: {
         label: RESPONSE_FILTER.REWRITTEN.label,
-        color: 'blue',
+        color: QUERY_STATUS_COLORS.BLUE,
     },
     [FILTERED_STATUS.REWRITE_HOSTS]: {
         label: RESPONSE_FILTER.REWRITTEN.label,
-        color: 'blue',
+        color: QUERY_STATUS_COLORS.BLUE,
     },
     [FILTERED_STATUS.FILTERED_SAFE_BROWSING]: {
         label: RESPONSE_FILTER.BLOCKED_THREATS.label,
-        color: 'yellow',
+        color: QUERY_STATUS_COLORS.YELLOW,
     },
     [FILTERED_STATUS.FILTERED_PARENTAL]: {
         label: RESPONSE_FILTER.BLOCKED_ADULT_WEBSITES.label,
-        color: 'yellow',
+        color: QUERY_STATUS_COLORS.YELLOW,
     },
 };
 

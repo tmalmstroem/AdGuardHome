@@ -1,0 +1,94 @@
+.logs__cell {
+    padding: 1rem 1rem 0.5rem 0;
+}
+
+.logs__cell--date {
+    width: 70px;
+    flex: 70 0 auto;
+}
+
+.logs__cell--domain {
+    width: 180px;
+    flex: 180 0 auto;
+}
+
+.logs__cell--response {
+    width: 150px;
+    flex: 180 0 auto;
+}
+
+.logs__cell--client {
+    width: 123px;
+    flex: 123 0 auto;
+    padding-right: 0;
+}
+
+/* todo fix padding for first and last child */
+.logs__cell--header__container > .logs__cell--header__item {
+    padding: 0.9375rem 0.9375rem 0.875rem 0;
+    text-align: left;
+    border-right: 0;
+}
+
+.logs__cell--header > .test:last-child, .logs__cell--header > .test:first-child {
+    padding: 0 1.5rem;
+}
+
+.test__separation-line:not(:first-child):before {
+    content: "";
+    position: absolute;
+    left: 1.5rem;
+    right: 1.5rem;
+    top: 0;
+    width: calc(100% - 3rem);
+    height: 2px;
+    background-color: rgba(216, 216, 216, 0.23);
+}
+
+.logs__cell--block-button {
+    position: absolute;
+    top: 20%;
+    right: 1rem;
+}
+
+.logs__cell--detailed .logs__cell--block-button {
+    position: absolute;
+    top: 40%;
+    right: 1rem;
+}
+
+.logs__table .rt-tr:hover .logs__cell--block-button {
+    visibility: visible;
+    opacity: 1;
+}
+
+.red {
+    /* todo move colors to variables */
+    background-color: rgba(223, 56, 18, 0.05);
+}
+
+.green {
+    background-color: rgba(103, 178, 121, 0.1);
+}
+
+.blue {
+    background-color: #e5effd;
+}
+
+.yellow {
+    background-color: var(--yellow-pale);
+}
+
+.logs__no-data {
+    display: block;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255, 255, 255, 0.8);
+    transition: all .3s ease;
+    pointer-events: none;
+    padding: 20px;
+    color: var(--gray-4d);
+    font-weight: bold;
+}

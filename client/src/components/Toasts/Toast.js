@@ -11,10 +11,10 @@ class Toast extends Component {
     componentDidMount() {
         this.setRemoveToastTimeout();
     }
-
-    shouldComponentUpdate() {
-        return false;
-    }
+    // todo find out why? can't rerender message on language change
+    // shouldComponentUpdate() {
+    //     return false;
+    // }
 
     clearRemoveToastTimeout = () => clearTimeout(this.state.timerId);
 
@@ -33,6 +33,7 @@ class Toast extends Component {
             return <span dangerouslySetInnerHTML={{ __html: t(message) }} />;
         }
 
+        // todo replace to t or not?
         return <Trans>{message}</Trans>;
     }
 

@@ -1,6 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
+import { useTranslation } from 'react-i18next';
 import getIconTooltip from './getIconTooltip';
 import {
     DEFAULT_SHORT_DATE_FORMAT_OPTIONS,
@@ -12,8 +13,10 @@ import { getSourceData } from '../../../helpers/trackers/trackers';
 
 const getDomainCell = (props) => {
     const {
-        row, t, isDetailed, dnssec_enabled,
+        row, isDetailed, dnssec_enabled,
     } = props;
+
+    const { t } = useTranslation();
 
     const {
         tracker, type, answer_dnssec, client_proto, domain, time,
@@ -114,7 +117,6 @@ getDomainCell.propTypes = {
     row: PropTypes.object.isRequired,
     t: PropTypes.func.isRequired,
     isDetailed: PropTypes.bool.isRequired,
-    toggleBlocking: PropTypes.func.isRequired,
     autoClients: PropTypes.array.isRequired,
     dnssec_enabled: PropTypes.bool.isRequired,
 };

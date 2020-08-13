@@ -2,12 +2,16 @@ import { createAction } from 'redux-actions';
 import i18next from 'i18next';
 import axios from 'axios';
 
+import endsWith from 'lodash/endsWith';
+import escapeRegExp from 'lodash/escapeRegExp';
 import { splitByNewLine, sortClients } from '../helpers/helpers';
-import { CHECK_TIMEOUT, SETTINGS_NAMES } from '../helpers/constants';
+import { BLOCK_ACTIONS, CHECK_TIMEOUT, SETTINGS_NAMES } from '../helpers/constants';
 import { areEqualVersions } from '../helpers/version';
 import { getTlsStatus } from './encryption';
 import apiClient from '../api/Api';
 import { addErrorToast, addNoticeToast, addSuccessToast } from './toasts';
+import { getFilteringStatus, setRules } from './filtering';
+import i18n from '../i18n';
 
 export const toggleSettingStatus = createAction('SETTING_STATUS_TOGGLE');
 export const showSettingsFailure = createAction('SETTINGS_FAILURE_SHOW');
@@ -483,3 +487,36 @@ export const removeStaticLease = (config) => async (dispatch) => {
 };
 
 export const removeToast = createAction('REMOVE_TOAST');
+
+export const toggleBlocking = (type, domain) => async (dispatch, getState) => {
+    const { userRules } = getState().filtering;
+
+    const lineEnding = !endsWith(userRules, '\n') ? '\n' : '';
+    const baseRule = `||${domain}^$important`;
+    const baseUnblocking = `@@${baseRule}`;
+
+    const blockingRule = type === BLOCK_ACTIONS.BLOCK ? baseUnblocking : baseRule;
+    const unblockingRule = type === BLOCK_ACTIONS.BLOCK ? baseRule : baseUnblocking;
+    const preparedBlockingRule = new RegExp(`(^|\n)${escapeRegExp(blockingRule)}($|\n)`);
+    const preparedUnblockingRule = new RegExp(`(^|\n)${escapeRegExp(unblockingRule)}($|\n)`);
+
+    const matchPreparedBlockingRule = userRules.match(preparedBlockingRule);
+    const matchPreparedUnblockingRule = userRules.match(preparedUnblockingRule);
+
+    if (matchPreparedBlockingRule) {
+        dispatch(setRules(userRules.replace(`${blockingRule}`, '')));
+        // todo: update translation on language change
+        dispatch(addSuccessToast(`${i18n.t('rule_removed_from_custom_filtering_toast')}: ${blockingRule}`));
+    } else if (!matchPreparedUnblockingRule) {
+        dispatch(setRules(`${userRules}${lineEnding}${unblockingRule}\n`));
+        dispatch(addSuccessToast(`${i18n.t('rule_added_to_custom_filtering_toast')}: ${unblockingRule}`));
+    } else if (matchPreparedUnblockingRule) {
+        dispatch(addSuccessToast(`${i18n.t('rule_added_to_custom_filtering_toast')}: ${unblockingRule}`));
+        return;
+    } else if (!matchPreparedBlockingRule) {
+        dispatch(addSuccessToast(`${i18n.t('rule_removed_from_custom_filtering_toast')}: ${blockingRule}`));
+        return;
+    }
+
+    dispatch(getFilteringStatus());
+};

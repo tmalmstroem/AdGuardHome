@@ -24,6 +24,7 @@ const getFormattedWhois = (whois) => {
     );
 };
 
+// todo refactor
 export const formatClientCell = (row, isDetailed = false, isLogs = true) => {
     const { value, original: { info } } = row;
     let whoisContainer = '';
