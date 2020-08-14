@@ -226,13 +226,13 @@
     background-color: #fff;
     border: 0;
     border-radius: 8px;
-    min-height: 42rem;
+    min-height: 20rem;
     max-width: 100%;
 }
 
-.logs__table--detailed {
-    min-height: 50rem;
-}
+/*.logs__table--detailed {*/
+/*    min-height: 50rem;*/
+/*}*/
 
 .logs__table .rt-thead.-header {
     box-shadow: none;

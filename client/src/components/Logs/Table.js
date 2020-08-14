@@ -170,7 +170,7 @@ const Table = (props) => {
 
     const changePage = async (page) => {
         setIsLoading(true);
-
+        console.log('changePage');
         const { oldest, getLogs, pages } = props;
         const isLastPage = pages && (page + 1 === pages);
 

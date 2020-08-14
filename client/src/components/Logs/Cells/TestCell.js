@@ -23,6 +23,7 @@ import { getSourceData } from '../../../helpers/trackers/trackers';
 import { toggleBlocking } from '../../../actions';
 import '../Test.css';
 import '../Logs.css';
+import Loading from '../../ui/Loading';
 
 const getFilterName = (filters, whitelistFilters, filterId, t) => {
     if (filterId === CUSTOM_FILTERING_RULES_ID) {
@@ -331,18 +332,26 @@ const ClientCell = ({
 };
 
 const TestCell = (props) => {
-    const { style, item, item: { reason } } = props;
+    const {
+        style, item, item: { reason },
+        getIsItemLoaded,
+        index,
+    } = props;
     const isDetailed = useSelector((state) => state.queryLogs.isDetailed);
 
     const className = classNames('rt-tr test__separation-line',
         FILTERED_STATUS_TO_META_MAP?.[reason]?.color ?? QUERY_STATUS_COLORS.WHITE,
         { 'logs__cell--detailed': isDetailed });
 
-    return <div style={style} className={className} role="row">
-        <DateCell {...item} />
-        <DomainCell {...item} />
-        <ResponseCell {...item} />
-        <ClientCell {...item} />
+    return <div style={style} className={className}>
+        {getIsItemLoaded(index)
+            ? <>
+                    <DateCell {...item} />
+                    <DomainCell {...item} />
+                    <ResponseCell {...item} />
+                    <ClientCell {...item} />
+            </>
+            : 'Loading...'}
     </div>;
 };
 

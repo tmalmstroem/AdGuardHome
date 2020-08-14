@@ -209,7 +209,10 @@ const Logs = (props) => {
                         processingAdditionalLogs={processingAdditionalLogs}
                         refreshLogs={refreshLogs}
                     />
-                     <Example items={allLogs} />
+                     <Example />
+                    <br />
+                    OLD TABLE
+                    <br />
                      <Table
                         isLoading={isLoading}
                         setIsLoading={setIsLoading}

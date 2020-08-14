@@ -71,8 +71,7 @@ class StaticLeases extends Component {
                                             className="btn btn-icon btn-icon--green btn-outline-secondary btn-sm"
                                             title={t('delete_table_action')}
                                             disabled={processingDeleting}
-                                            onClick={() => this.handleDelete(ip, mac, hostname)
-                                            }
+                                            onClick={() => this.handleDelete(ip, mac, hostname)}
                                         >
                                             <svg className="icons">
                                                 <use xlinkHref="#delete"/>
