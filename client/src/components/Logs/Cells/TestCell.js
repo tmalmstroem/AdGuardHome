@@ -4,10 +4,10 @@ import React from 'react';
 import { nanoid } from 'nanoid';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
-import { useDispatch, useSelector } from 'react-redux';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { formatClientCell } from '../../../helpers/formatClientCell';
 import {
-    checkFiltered, formatElapsedMs, captitalizeWords, formatDateTime, formatTime,
+    checkFiltered, formatElapsedMs, captitalizeWords, formatDateTime, formatTime, processContent,
 } from '../../../helpers/helpers';
 import {
     BLOCK_ACTIONS, FILTERED_STATUS,
@@ -334,7 +334,120 @@ const ClientCell = ({
 const TestCell = (props) => {
     const {
         style, item, item: { reason },
+        isSmallScreen,
+        setDetailedDataCurrent,
+        setButtonType,
+        setModalOpened,
     } = props;
+
+    const dispatch = useDispatch();
+    const { t } = useTranslation();
+    const dnssec_enabled = useSelector((state) => state.dnsConfig.dnssec_enabled);
+    const {
+        filters,
+        whitelistFilters,
+    } = useSelector((state) => state.filtering, shallowEqual);
+    const autoClients = useSelector((state) => state.dashboard.autoClients, shallowEqual);
+
+    const onClick = () => {
+        if (!isSmallScreen) { return; }
+        const {
+            answer_dnssec,
+            client,
+            domain,
+            elapsedMs,
+            info,
+            reason,
+            response,
+            time,
+            tracker,
+            upstream,
+            type,
+            client_proto,
+            filterId,
+            rule,
+            originalResponse,
+            status,
+        } = item;
+
+        const hasTracker = !!tracker;
+
+        const autoClient = autoClients
+            .find((autoClient) => autoClient.name === client);
+
+        const { whois_info } = info;
+        const country = whois_info?.country;
+        const city = whois_info?.city;
+        const network = whois_info?.orgname;
+
+        const source = autoClient?.source;
+
+        const formattedElapsedMs = formatElapsedMs(elapsedMs, t);
+        const isFiltered = checkFiltered(reason);
+
+        const isBlocked = reason === FILTERED_STATUS.FILTERED_BLACK_LIST
+                    || reason === FILTERED_STATUS.FILTERED_BLOCKED_SERVICE;
+
+        const buttonType = isFiltered ? BLOCK_ACTIONS.UNBLOCK : BLOCK_ACTIONS.BLOCK;
+        const onToggleBlock = () => {
+            dispatch(toggleBlocking(buttonType, domain));
+        };
+
+        const isBlockedByResponse = originalResponse.length > 0 && isBlocked;
+        const requestStatus = t(isBlockedByResponse ? 'blocked_by_cname_or_ip' : FILTERED_STATUS_TO_META_MAP[reason]?.label || reason);
+
+        const protocol = t(SCHEME_TO_PROTOCOL_MAP[client_proto]) || '';
+
+        const sourceData = getSourceData(tracker);
+
+        const filter = getFilterName(filters, whitelistFilters, filterId, t);
+
+        const detailedData = {
+            time_table_header: formatTime(time, LONG_TIME_FORMAT),
+            date: formatDateTime(time, DEFAULT_SHORT_DATE_FORMAT_OPTIONS),
+            encryption_status: isBlocked
+                ? <div className="bg--danger">{requestStatus}</div> : requestStatus,
+            domain,
+            type_table_header: type,
+            protocol,
+            known_tracker: hasTracker && 'title',
+            table_name: tracker?.name,
+            category_label: hasTracker && captitalizeWords(tracker.category),
+            tracker_source: hasTracker && sourceData
+                        && <a
+                                href={sourceData.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="link--green">{sourceData.name}
+                        </a>,
+            response_details: 'title',
+            install_settings_dns: upstream,
+            elapsed: formattedElapsedMs,
+            filter: rule ? filter : null,
+            rule_label: rule,
+            response_table_header: response?.join('\n'),
+            response_code: status,
+            client_details: 'title',
+            ip_address: client,
+            name: info?.name,
+            country,
+            city,
+            network,
+            source_label: source,
+            validated_with_dnssec: dnssec_enabled ? Boolean(answer_dnssec) : false,
+            original_response: originalResponse?.join('\n'),
+            [buttonType]: <div onClick={onToggleBlock}
+                                   className={classNames('title--border text-center', {
+                                       'bg--danger': isBlocked,
+                                   })}>{t(buttonType)}</div>,
+        };
+
+        setDetailedDataCurrent(processContent(detailedData));
+        setButtonType(buttonType);
+        setModalOpened(true);
+    };
+
+
     const isDetailed = useSelector((state) => state.queryLogs.isDetailed);
 
     const className = classNames('rt-tr test__separation-line px-5',
@@ -342,7 +455,7 @@ const TestCell = (props) => {
         FILTERED_STATUS_TO_META_MAP?.[reason]?.color ?? QUERY_STATUS_COLORS.WHITE,
         { 'logs__cell--detailed': isDetailed });
 
-    return <div style={style} className={className}>
+    return <div style={style} className={className} onClick={onClick}>
         <DateCell {...item} />
         <DomainCell {...item} />
         <ResponseCell {...item} />

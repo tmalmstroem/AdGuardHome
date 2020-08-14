@@ -210,7 +210,12 @@ const Logs = (props) => {
                         refreshLogs={refreshLogs}
                     />
                     NEW TABLE
-                    <Example isLoading={isLoading} />
+                    <Example isLoading={isLoading}
+                             isSmallScreen={isSmallScreen}
+                             setDetailedDataCurrent={setDetailedDataCurrent}
+                             setButtonType={setButtonType}
+                             setModalOpened={setModalOpened}
+                    />
                     <Table
                         isLoading={isLoading}
                         setIsLoading={setIsLoading}

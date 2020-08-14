@@ -10,8 +10,8 @@
 }
 
 .logs__cell--domain {
-    --size: 190;
-    width: 190px;
+    --size: 180;
+    width: 180px;
     flex: var(--size) 0 auto;
 }
 
@@ -28,11 +28,13 @@
     padding-right: 0;
 }
 
-/* todo fix padding for first and last child */
 .logs__cell--header__container > .logs__cell--header__item {
-    padding: 0.9375rem 0.9375rem 0.875rem 0;
-    text-align: left;
     border-right: 0;
+    font-size: 1rem;
+}
+
+.logs__cell--header__container > .logs__cell--header__item:last-child {
+    padding-right: 0;
 }
 
 .logs__cell--header > .test:last-child, .logs__cell--header > .test:first-child {

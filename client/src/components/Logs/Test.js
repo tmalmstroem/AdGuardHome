@@ -7,8 +7,23 @@ import { Trans, useTranslation } from 'react-i18next';
 import classNames from 'classnames';
 import TestCell from './Cells/TestCell';
 import { getLogs, toggleDetailedLogs } from '../../actions/queryLogs';
-import { QUERY_LOGS_SEARCH_LIMIT, TABLE_DEFAULT_PAGE_SIZE } from '../../helpers/constants';
+import {
+    BLOCK_ACTIONS, DEFAULT_SHORT_DATE_FORMAT_OPTIONS,
+    FILTERED_STATUS, FILTERED_STATUS_TO_META_MAP, LONG_TIME_FORMAT,
+    QUERY_LOGS_SEARCH_LIMIT, SCHEME_TO_PROTOCOL_MAP,
+    TABLE_DEFAULT_PAGE_SIZE,
+} from '../../helpers/constants';
 import Loading from '../ui/Loading';
+import {
+    captitalizeWords,
+    checkFiltered,
+    formatDateTime,
+    formatElapsedMs,
+    formatTime,
+    processContent,
+} from '../../helpers/helpers';
+import { toggleBlocking } from '../../actions';
+import { getSourceData } from '../../helpers/trackers/trackers';
 
 const Header = () => {
     const { t } = useTranslation();
@@ -17,11 +32,11 @@ const Header = () => {
     const onClickOff = () => dispatch(toggleDetailedLogs(false));
     const onClickOn = () => dispatch(toggleDetailedLogs(true));
 
-    return <div className="d-flex logs__cell--header__container px-5">
+    return <div className="logs__cell--header__container px-5">
         <div className="logs__cell--header__item logs__cell logs__cell--date logs__text--bold">{t('time_table_header')}</div>
         <div className="logs__cell--header__item logs__cell logs__cell--domain logs__text--bold">{t('request_table_header')}</div>
         <div className="logs__cell--header__item logs__cell logs__cell--response logs__text--bold">{t('response_table_header')}</div>
-        <div className="logs__cell--header__item logs__cell d-flex justify-content-between logs__cell--client logs__text--bold">{t('client_table_header')}
+        <div className="logs__cell--header__item logs__cell logs__cell--client logs__text--bold">{t('client_table_header')}
             {<span>
                         <svg
                                 className={classNames('icons icon--24 icon--green mr-2 cursor--pointer', {
@@ -48,9 +63,11 @@ const Header = () => {
 const Example = (props) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
-    const { isLoading } = props;
-
-    console.log('isLoading', isLoading);
+    const {
+        isLoading, isSmallScreen, setDetailedDataCurrent,
+        setButtonType,
+        setModalOpened,
+    } = props;
 
     // Are there more items to load?
     // (This information comes from the most recent API request.)
@@ -171,7 +188,7 @@ const Example = (props) => {
                 {itemCount === 0 && !processingGetLogs
                     ? <label className="logs__no-data logs__text--bold">{t('nothing_found')}</label>
                     : <FixedSizeList
-                                className=""
+                                className="mw-100"
                                 width={1176}
                                 height={1600}
                                 itemCount={itemCount}
@@ -182,7 +199,12 @@ const Example = (props) => {
                             {({
                                 index,
                                 style,
-                            }) => <Test style={style} item={items?.[index]} />}
+                            }) => <Test style={style}
+                                        item={items?.[index]}
+                                        isSmallScreen={isSmallScreen}
+                                        setDetailedDataCurrent={setDetailedDataCurrent}
+                                        setButtonType={setButtonType}
+                                        setModalOpened={setModalOpened} />}
                         </FixedSizeList>}
             </div>
         </div>}
