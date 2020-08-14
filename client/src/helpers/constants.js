@@ -492,3 +492,6 @@ export const SMALL_SCREEN_SIZE = 767;
 export const MEDIUM_SCREEN_SIZE = 1023;
 
 export const SECONDS_IN_HOUR = 60 * 60;
+
+// todo add to documentation
+export const QUERY_LOGS_SEARCH_LIMIT = 500;

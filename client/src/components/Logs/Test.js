@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { FixedSizeList } from 'react-window';
 import InfiniteLoader from 'react-window-infinite-loader';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
@@ -7,7 +7,8 @@ import { Trans, useTranslation } from 'react-i18next';
 import classNames from 'classnames';
 import TestCell from './Cells/TestCell';
 import { getLogs, toggleDetailedLogs } from '../../actions/queryLogs';
-import { TABLE_DEFAULT_PAGE_SIZE } from '../../helpers/constants';
+import { QUERY_LOGS_SEARCH_LIMIT, TABLE_DEFAULT_PAGE_SIZE } from '../../helpers/constants';
+import Loading from '../ui/Loading';
 
 const Header = () => {
     const { t } = useTranslation();
@@ -44,9 +45,12 @@ const Header = () => {
         </div></div>;
 };
 
-const Example = () => {
+const Example = (props) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
+    const { isLoading } = props;
+
+    console.log('isLoading', isLoading);
 
     // Are there more items to load?
     // (This information comes from the most recent API request.)
@@ -68,7 +72,8 @@ const Example = () => {
     const _loadNextPage = (...args) => {
         console.log('loadNextPage', ...args);
         setIsNextPageLoading(true);
-        setHasNextPage(allLogs.length < 500);
+        // page size
+        setHasNextPage(allLogs.length < QUERY_LOGS_SEARCH_LIMIT);
         setIsNextPageLoading(false);
 
         // this.setState({ isNextPageLoading: true }, () => {
@@ -92,7 +97,6 @@ const Example = () => {
         pages,
         total,
     } = useSelector((state) => state.queryLogs, shallowEqual);
-    console.log('oldest', oldest);
     // const processingGetLogs = useSelector((state) => state.queryLogs.processingGetLogs);
 
     const itemCount = total;
@@ -148,13 +152,20 @@ const Example = () => {
     // todo test if this really produce optimization
     const Test = useCallback(TestCell, [items]);
 
-    // todo implement dynamic loading of new items
+    // todo test dynamic loading of new items
+    // todo extract react-table styles
     return <InfiniteLoader
             isItemLoaded={getIsItemLoaded}
             itemCount={itemCount}
             loadMoreItems={loadMoreItems}
     >
         {({ onItemsRendered, ref }) => <div className='ReactTable logs__table logs__table--new'>
+            {(isLoading || processingGetLogs) && <div className="-loading -active loading__container">
+                <div className="-loading-inner">
+                    <Loading />
+                    <h6 className="loading__text">Loading...</h6>
+                </div>
+            </div>}
                         <div className="rt-table px-5" role="grid">
                             <Header />
                             {itemCount === 0 && !processingGetLogs
@@ -179,3 +190,12 @@ const Example = () => {
 };
 
 export default Example;
+
+
+const a = () => <div className="ReactTable logs__table logs__table--detailed">
+    <div className="-loading -active loading__container">
+        <div className="-loading-inner">
+            <div className="loading"></div>
+            <h6 className="loading__text">Loading...</h6></div>
+    </div>
+</div>;
