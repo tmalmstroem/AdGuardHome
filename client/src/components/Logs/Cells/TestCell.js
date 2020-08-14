@@ -334,24 +334,19 @@ const ClientCell = ({
 const TestCell = (props) => {
     const {
         style, item, item: { reason },
-        getIsItemLoaded,
-        index,
     } = props;
     const isDetailed = useSelector((state) => state.queryLogs.isDetailed);
 
-    const className = classNames('rt-tr test__separation-line',
+    const className = classNames('rt-tr test__separation-line px-5',
+        // todo rename to e.g. status--red
         FILTERED_STATUS_TO_META_MAP?.[reason]?.color ?? QUERY_STATUS_COLORS.WHITE,
         { 'logs__cell--detailed': isDetailed });
 
     return <div style={style} className={className}>
-        {getIsItemLoaded(index)
-            ? <>
-                    <DateCell {...item} />
-                    <DomainCell {...item} />
-                    <ResponseCell {...item} />
-                    <ClientCell {...item} />
-            </>
-            : 'Loading...'}
+        <DateCell {...item} />
+        <DomainCell {...item} />
+        <ResponseCell {...item} />
+        <ClientCell {...item} />
     </div>;
 };
 

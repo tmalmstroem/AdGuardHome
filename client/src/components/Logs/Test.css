@@ -3,23 +3,28 @@
 }
 
 .logs__cell--date {
+    --size: 70;
+    /*todo make rem*/
     width: 70px;
-    flex: 70 0 auto;
+    flex: var(--size) 0 auto;
 }
 
 .logs__cell--domain {
-    width: 180px;
-    flex: 180 0 auto;
+    --size: 190;
+    width: 190px;
+    flex: var(--size) 0 auto;
 }
 
 .logs__cell--response {
+    --size: 150;
     width: 150px;
-    flex: 180 0 auto;
+    flex: var(--size) 0 auto;
 }
 
 .logs__cell--client {
+    --size: 123;
     width: 123px;
-    flex: 123 0 auto;
+    flex: var(--size) 0 auto;
     padding-right: 0;
 }
 

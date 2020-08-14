@@ -17,7 +17,7 @@ const Header = () => {
     const onClickOff = () => dispatch(toggleDetailedLogs(false));
     const onClickOn = () => dispatch(toggleDetailedLogs(true));
 
-    return <div className="d-flex logs__cell--header__container">
+    return <div className="d-flex logs__cell--header__container px-5">
         <div className="logs__cell--header__item logs__cell logs__cell--date logs__text--bold">{t('time_table_header')}</div>
         <div className="logs__cell--header__item logs__cell logs__cell--domain logs__text--bold">{t('request_table_header')}</div>
         <div className="logs__cell--header__item logs__cell logs__cell--response logs__text--bold">{t('response_table_header')}</div>
@@ -166,36 +166,27 @@ const Example = (props) => {
                     <h6 className="loading__text">Loading...</h6>
                 </div>
             </div>}
-                        <div className="rt-table px-5" role="grid">
-                            <Header />
-                            {itemCount === 0 && !processingGetLogs
-                                ? <label className="logs__no-data logs__text--bold">{t('nothing_found')}</label>
-                                : <FixedSizeList
-                                            className=""
-                                            width={1152}
-                                            height={1600}
-                                            itemCount={itemCount}
-                                            itemSize={isDetailed ? 80 : 50}
-                                            onItemsRendered={onItemsRendered}
-                                            ref={ref}
-                                    >
-                                         {({
-                                             index,
-                                             style,
-                                         }) => <Test style={style} item={items?.[index]} getIsItemLoaded={getIsItemLoaded} index={index} />}
-                                    </FixedSizeList>}
-                            </div>
-                        </div>}
+            <div className="rt-table" role="grid">
+                <Header />
+                {itemCount === 0 && !processingGetLogs
+                    ? <label className="logs__no-data logs__text--bold">{t('nothing_found')}</label>
+                    : <FixedSizeList
+                                className=""
+                                width={1176}
+                                height={1600}
+                                itemCount={itemCount}
+                                itemSize={isDetailed ? 80 : 50}
+                                onItemsRendered={onItemsRendered}
+                                ref={ref}
+                        >
+                            {({
+                                index,
+                                style,
+                            }) => <Test style={style} item={items?.[index]} />}
+                        </FixedSizeList>}
+            </div>
+        </div>}
     </InfiniteLoader>;
 };
 
 export default Example;
-
-
-const a = () => <div className="ReactTable logs__table logs__table--detailed">
-    <div className="-loading -active loading__container">
-        <div className="-loading-inner">
-            <div className="loading"></div>
-            <h6 className="loading__text">Loading...</h6></div>
-    </div>
-</div>;

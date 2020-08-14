@@ -209,12 +209,9 @@ const Logs = (props) => {
                         processingAdditionalLogs={processingAdditionalLogs}
                         refreshLogs={refreshLogs}
                     />
-                     <Example isLoading={isLoading} />
-                    <br />
-                    OLD TABLE
-                    <br />
-{/*
-                     <Table
+                    NEW TABLE
+                    <Example isLoading={isLoading} />
+                    <Table
                         isLoading={isLoading}
                         setIsLoading={setIsLoading}
                         logs={logs}
@@ -239,7 +236,6 @@ const Logs = (props) => {
                         setModalOpened={setModalOpened}
                         isSmallScreen={isSmallScreen}
                     />
-*/}
                     <Modal portalClassName='grid' isOpen={isSmallScreen && isModalOpened}
                            onRequestClose={closeModal}
                            style={{
