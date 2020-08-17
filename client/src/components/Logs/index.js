@@ -68,9 +68,6 @@ const Logs = (props) => {
     const dispatch = useDispatch();
     const history = useHistory();
 
-    const queryLogs = useSelector((state) => state.queryLogs, shallowEqual);
-    const { allLogs } = queryLogs;
-
     const {
         response_status: response_status_url_param = '',
         search: search_url_param = '',

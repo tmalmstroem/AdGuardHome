@@ -1,3 +1,11 @@
+:root {
+    --blue: #e5effd;
+    --green: rgba(103, 178, 121, 0.1);
+    --red: rgba(223, 56, 18, 0.05);
+    --white: #fff;
+    --yellow: rgba(247, 181, 0, 0.1);
+}
+
 .logs__cell {
     padding: 1rem 1rem 0.5rem 0;
 }
@@ -41,7 +49,7 @@
     padding: 0 1.5rem;
 }
 
-.test__separation-line:not(:first-child):before {
+.logs__row-separation-line:not(:first-child):before {
     content: "";
     position: absolute;
     left: 1.5rem;
@@ -69,21 +77,25 @@
     opacity: 1;
 }
 
-.red {
-    /* todo move colors to variables */
-    background-color: rgba(223, 56, 18, 0.05);
+/* QUERY_STATUS_COLORS */
+.logs__row--blue {
+    background-color: var(--blue);
 }
 
-.green {
-    background-color: rgba(103, 178, 121, 0.1);
+.logs__row--green {
+    background-color: var(--green);
 }
 
-.blue {
-    background-color: #e5effd;
+.logs__row--red {
+    background-color: var(--red);
 }
 
-.yellow {
-    background-color: var(--yellow-pale);
+.logs__row--white {
+    background-color: var(--white);
+}
+
+.logs__row--yellow {
+    background-color: var(--yellow);
 }
 
 .logs__no-data {

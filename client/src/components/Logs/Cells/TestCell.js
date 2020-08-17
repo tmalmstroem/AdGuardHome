@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-// todo remove eslint prop-types rule
+// todo return eslint prop-types rule
 import React from 'react';
 import { nanoid } from 'nanoid';
 import classNames from 'classnames';
@@ -186,7 +186,7 @@ const ResponseCell = ({
 
     const isBlockedByResponse = originalResponse.length > 0 && isBlocked;
 
-    const statusLabel = t(isBlockedByResponse ? 'blocked_by_cname_or_ip' : FILTERED_STATUS_TO_META_MAP[reason]?.label || reason);
+    const statusLabel = t(isBlockedByResponse ? 'blocked_by_cname_or_ip' : FILTERED_STATUS_TO_META_MAP[reason]?.LABEL || reason);
     const boldStatusLabel = <span className="font-weight-bold">{statusLabel}</span>;
     const filter = getFilterName(filters, whitelistFilters, filterId, t);
 
@@ -393,7 +393,7 @@ const TestCell = (props) => {
         };
 
         const isBlockedByResponse = originalResponse.length > 0 && isBlocked;
-        const requestStatus = t(isBlockedByResponse ? 'blocked_by_cname_or_ip' : FILTERED_STATUS_TO_META_MAP[reason]?.label || reason);
+        const requestStatus = t(isBlockedByResponse ? 'blocked_by_cname_or_ip' : FILTERED_STATUS_TO_META_MAP[reason]?.LABEL || reason);
 
         const protocol = t(SCHEME_TO_PROTOCOL_MAP[client_proto]) || '';
 
@@ -449,10 +449,10 @@ const TestCell = (props) => {
 
     const isDetailed = useSelector((state) => state.queryLogs.isDetailed);
 
-    const className = classNames('rt-tr test__separation-line px-5',
-        // todo rename to e.g. status--red
-        FILTERED_STATUS_TO_META_MAP?.[reason]?.color ?? QUERY_STATUS_COLORS.WHITE,
-        { 'logs__cell--detailed': isDetailed });
+    const className = classNames('rt-tr logs__row-separation-line px-5',
+        `logs__row--${FILTERED_STATUS_TO_META_MAP?.[reason]?.COLOR ?? QUERY_STATUS_COLORS.WHITE}`, {
+            'logs__cell--detailed': isDetailed,
+        });
 
     return <div style={style} className={className} onClick={onClick}>
         <DateCell {...item} />

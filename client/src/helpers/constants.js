@@ -326,46 +326,46 @@ export const FILTERED_STATUS = {
 
 export const RESPONSE_FILTER = {
     ALL: {
-        query: 'all',
-        label: 'all_queries',
+        QUERY: 'all',
+        LABEL: 'all_queries',
     },
     FILTERED: {
-        query: 'filtered',
-        label: 'filtered',
+        QUERY: 'filtered',
+        LABEL: 'filtered',
     },
     PROCESSED: {
-        query: 'processed',
-        label: 'show_processed_responses',
+        QUERY: 'processed',
+        LABEL: 'show_processed_responses',
     },
     BLOCKED: {
-        query: 'blocked',
-        label: 'show_blocked_responses',
+        QUERY: 'blocked',
+        LABEL: 'show_blocked_responses',
     },
     BLOCKED_THREATS: {
-        query: 'blocked_safebrowsing',
-        label: 'blocked_threats',
+        QUERY: 'blocked_safebrowsing',
+        LABEL: 'blocked_threats',
     },
     BLOCKED_ADULT_WEBSITES: {
-        query: 'blocked_parental',
-        label: 'blocked_adult_websites',
+        QUERY: 'blocked_parental',
+        LABEL: 'blocked_adult_websites',
     },
     ALLOWED: {
-        query: 'whitelisted',
-        label: 'allowed',
+        QUERY: 'whitelisted',
+        LABEL: 'allowed',
     },
     REWRITTEN: {
-        query: 'rewritten',
-        label: 'rewritten',
+        QUERY: 'rewritten',
+        LABEL: 'rewritten',
     },
     SAFE_SEARCH: {
-        query: 'safe_search',
-        label: 'safe_search',
+        QUERY: 'safe_search',
+        LABEL: 'safe_search',
     },
 };
 
 export const RESPONSE_FILTER_QUERIES = Object.values(RESPONSE_FILTER)
-    .reduce((acc, { query }) => {
-        acc[query] = query;
+    .reduce((acc, { QUERY }) => {
+        acc[QUERY] = QUERY;
         return acc;
     }, {});
 
@@ -377,43 +377,42 @@ export const QUERY_STATUS_COLORS = {
     YELLOW: 'yellow',
 };
 
-// todo capitalize fields names
 export const FILTERED_STATUS_TO_META_MAP = {
     [FILTERED_STATUS.NOT_FILTERED_WHITE_LIST]: {
-        label: RESPONSE_FILTER.ALLOWED.label,
-        color: QUERY_STATUS_COLORS.GREEN,
+        LABEL: RESPONSE_FILTER.ALLOWED.LABEL,
+        COLOR: QUERY_STATUS_COLORS.GREEN,
     },
     [FILTERED_STATUS.NOT_FILTERED_NOT_FOUND]: {
-        label: RESPONSE_FILTER.PROCESSED.label,
-        color: QUERY_STATUS_COLORS.WHITE,
+        LABEL: RESPONSE_FILTER.PROCESSED.LABEL,
+        COLOR: QUERY_STATUS_COLORS.WHITE,
     },
     [FILTERED_STATUS.FILTERED_BLOCKED_SERVICE]: {
-        label: RESPONSE_FILTER.BLOCKED.label,
-        color: QUERY_STATUS_COLORS.RED,
+        LABEL: RESPONSE_FILTER.BLOCKED.LABEL,
+        COLOR: QUERY_STATUS_COLORS.RED,
     },
     [FILTERED_STATUS.FILTERED_SAFE_SEARCH]: {
-        label: RESPONSE_FILTER.SAFE_SEARCH.label,
-        color: QUERY_STATUS_COLORS.YELLOW,
+        LABEL: RESPONSE_FILTER.SAFE_SEARCH.LABEL,
+        COLOR: QUERY_STATUS_COLORS.YELLOW,
     },
     [FILTERED_STATUS.FILTERED_BLACK_LIST]: {
-        label: RESPONSE_FILTER.BLOCKED.label,
-        color: QUERY_STATUS_COLORS.RED,
+        LABEL: RESPONSE_FILTER.BLOCKED.LABEL,
+        COLOR: QUERY_STATUS_COLORS.RED,
     },
     [FILTERED_STATUS.REWRITE]: {
-        label: RESPONSE_FILTER.REWRITTEN.label,
-        color: QUERY_STATUS_COLORS.BLUE,
+        LABEL: RESPONSE_FILTER.REWRITTEN.LABEL,
+        COLOR: QUERY_STATUS_COLORS.BLUE,
     },
     [FILTERED_STATUS.REWRITE_HOSTS]: {
-        label: RESPONSE_FILTER.REWRITTEN.label,
-        color: QUERY_STATUS_COLORS.BLUE,
+        LABEL: RESPONSE_FILTER.REWRITTEN.LABEL,
+        COLOR: QUERY_STATUS_COLORS.BLUE,
     },
     [FILTERED_STATUS.FILTERED_SAFE_BROWSING]: {
-        label: RESPONSE_FILTER.BLOCKED_THREATS.label,
-        color: QUERY_STATUS_COLORS.YELLOW,
+        LABEL: RESPONSE_FILTER.BLOCKED_THREATS.LABEL,
+        COLOR: QUERY_STATUS_COLORS.YELLOW,
     },
     [FILTERED_STATUS.FILTERED_PARENTAL]: {
-        label: RESPONSE_FILTER.BLOCKED_ADULT_WEBSITES.label,
-        color: QUERY_STATUS_COLORS.YELLOW,
+        LABEL: RESPONSE_FILTER.BLOCKED_ADULT_WEBSITES.LABEL,
+        COLOR: QUERY_STATUS_COLORS.YELLOW,
     },
 };
 
@@ -493,5 +492,5 @@ export const MEDIUM_SCREEN_SIZE = 1023;
 
 export const SECONDS_IN_HOUR = 60 * 60;
 
-// todo add to documentation
+// todo change api and add to documentation
 export const QUERY_LOGS_SEARCH_LIMIT = 500;

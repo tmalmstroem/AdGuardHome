@@ -170,7 +170,6 @@ const Table = (props) => {
 
     const changePage = async (page) => {
         setIsLoading(true);
-        console.log('changePage');
         const { oldest, getLogs, pages } = props;
         const isLastPage = pages && (page + 1 === pages);
 
@@ -238,10 +237,10 @@ const Table = (props) => {
                 }
 
                 const { reason } = rowInfo.original;
-                const colorClass = FILTERED_STATUS_TO_META_MAP?.[reason]?.color
+                const colorClass = FILTERED_STATUS_TO_META_MAP?.[reason]?.COLOR
                         ?? QUERY_STATUS_COLORS.WHITE;
 
-                return { className: colorClass };
+                return { className: `logs__row--${colorClass}` };
             }}
             getTrProps={(state, rowInfo) => ({
                 className: isDetailed ? 'row--detailed' : '',
@@ -291,7 +290,7 @@ const Table = (props) => {
                         };
 
                         const isBlockedByResponse = originalResponse.length > 0 && isBlocked;
-                        const requestStatus = t(isBlockedByResponse ? 'blocked_by_cname_or_ip' : FILTERED_STATUS_TO_META_MAP[reason]?.label || reason);
+                        const requestStatus = t(isBlockedByResponse ? 'blocked_by_cname_or_ip' : FILTERED_STATUS_TO_META_MAP[reason]?.LABEL || reason);
 
                         const protocol = t(SCHEME_TO_PROTOCOL_MAP[client_proto]) || '';
 

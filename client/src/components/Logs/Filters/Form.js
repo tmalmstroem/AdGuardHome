@@ -171,14 +171,14 @@ const Form = (props) => {
                 >
                     {Object.values(RESPONSE_FILTER)
                         .map(({
-                            query, label, disabled,
+                            QUERY, LABEL, disabled,
                         }) => (
                             <option
-                                key={label}
-                                value={query}
+                                key={LABEL}
+                                value={QUERY}
                                 disabled={disabled}
                             >
-                                {t(label)}
+                                {t(LABEL)}
                             </option>
                         ))
                     }

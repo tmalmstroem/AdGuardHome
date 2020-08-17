@@ -1,4 +1,5 @@
-/* eslint-disable react/prop-types */
+/* eslint-disable */
+/* todo uncomment */
 import React, { useCallback, useEffect, useState } from 'react';
 import { FixedSizeList } from 'react-window';
 import InfiniteLoader from 'react-window-infinite-loader';
@@ -169,7 +170,6 @@ const Example = (props) => {
     // todo test if this really produce optimization
     const Test = useCallback(TestCell, [items]);
 
-    // todo test dynamic loading of new items
     // todo extract react-table styles
     return <InfiniteLoader
             isItemLoaded={getIsItemLoaded}

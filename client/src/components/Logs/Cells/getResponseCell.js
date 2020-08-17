@@ -20,7 +20,7 @@ const getResponseCell = (row, filtering, t, isDetailed, getFilterName) => {
 
     const isBlockedByResponse = originalResponse.length > 0 && isBlocked;
 
-    const statusLabel = t(isBlockedByResponse ? 'blocked_by_cname_or_ip' : FILTERED_STATUS_TO_META_MAP[reason]?.label || reason);
+    const statusLabel = t(isBlockedByResponse ? 'blocked_by_cname_or_ip' : FILTERED_STATUS_TO_META_MAP[reason]?.LABEL || reason);
     const boldStatusLabel = <span className="font-weight-bold">{statusLabel}</span>;
     const filter = getFilterName(filters, whitelistFilters, filterId, t);
 
