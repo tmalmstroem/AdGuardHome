@@ -4,14 +4,7 @@
     --danger: #DF3812;
 }
 
-.logs__row {
-    position: relative;
-    display: flex;
-    min-height: 26px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
+/* todo remove unused styles */
 .card-table .logs__row {
     overflow: hidden;
     text-overflow: ellipsis;
@@ -222,19 +215,6 @@
 }
 
 /* New logs */
-.logs__table {
-    background-color: #fff;
-    border: 0;
-    border-radius: 8px;
-    min-height: 42rem;
-    max-height: 95vh;
-    max-width: 100%;
-}
-
-/*.logs__table--detailed {*/
-/*    min-height: 50rem;*/
-/*}*/
-
 .logs__table .rt-thead.-header {
     box-shadow: none;
     font-weight: bold;
@@ -263,11 +243,6 @@
 .logs__table .rt-tr {
     position: relative;
     padding: 0 1.5rem;
-}
-
-.logs__table--new .rt-tr {
-    position: relative;
-    padding: 0;
 }
 
 .logs__table .rt-tr-group:not(:first-child) .rt-tr:before {
@@ -309,27 +284,6 @@
 .logs__table .rt-tbody .rt-td:nth-child(3),
 .logs__table .rt-tbody .rt-td:nth-child(4) {
     display: none;
-}
-
-.logs__table--new .logs__cell--response,
-.logs__table--new .logs__cell--client {
-    display: flex;
-}
-
-.logs__cell--header__container {
-    display: flex;
-}
-
-.logs__table--new .logs__cell--header__container > .logs__cell--client {
-    display: flex;
-    justify-content: space-between;
-}
-
-@media screen and (max-width: 767.98px) {
-    .logs__table--new .logs__cell--response,
-    .logs__table--new .logs__cell--client {
-        display: none !important;
-    }
 }
 
 @media screen and (min-width: 768px) {

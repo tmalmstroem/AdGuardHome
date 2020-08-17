@@ -1,13 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import { useTranslation } from 'react-i18next';
 import './Loading.css';
 
-// todo add text prop
-const Loading = ({ className }) => <div className={classNames('loading', className)} />;
+// todo setup text style
+const Loading = ({ className, text }) => {
+    const { t } = useTranslation();
+    return <div className={classNames('loading', className)}>{t(text)}</div>;
+};
 
 Loading.propTypes = {
     className: PropTypes.string,
+    text: PropTypes.string,
 };
 
 export default Loading;

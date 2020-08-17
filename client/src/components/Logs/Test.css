@@ -4,6 +4,11 @@
     --red: rgba(223, 56, 18, 0.05);
     --white: #fff;
     --yellow: rgba(247, 181, 0, 0.1);
+    --size-date: 70;
+    --size-domain: 180;
+    --size-response: 150;
+    --size-client: 123;
+    --gray: rgba(216, 216, 216, 0.23);
 }
 
 .logs__cell {
@@ -11,28 +16,23 @@
 }
 
 .logs__cell--date {
-    --size: 70;
-    /*todo make rem*/
-    width: 70px;
-    flex: var(--size) 0 auto;
+    width: 4.375rem;
+    flex: var(--size-date) 0 auto;
 }
 
 .logs__cell--domain {
-    --size: 180;
-    width: 180px;
-    flex: var(--size) 0 auto;
+    width: 11.25rem;
+    flex: var(--size-domain) 0 auto;
 }
 
 .logs__cell--response {
-    --size: 150;
-    width: 150px;
-    flex: var(--size) 0 auto;
+    width: 9.375rem;
+    flex: var(--size-response) 0 auto;
 }
 
 .logs__cell--client {
-    --size: 123;
-    width: 123px;
-    flex: var(--size) 0 auto;
+    width: 7.6875rem;
+    flex: var(--size-client) 0 auto;
     padding-right: 0;
 }
 
@@ -45,11 +45,7 @@
     padding-right: 0;
 }
 
-.logs__cell--header > .test:last-child, .logs__cell--header > .test:first-child {
-    padding: 0 1.5rem;
-}
-
-.logs__row-separation-line:not(:first-child):before {
+.logs__row--separation:not(:first-child):before {
     content: "";
     position: absolute;
     left: 1.5rem;
@@ -57,7 +53,7 @@
     top: 0;
     width: calc(100% - 3rem);
     height: 2px;
-    background-color: rgba(216, 216, 216, 0.23);
+    background-color: var(--gray);
 }
 
 .logs__cell--block-button {
@@ -72,7 +68,7 @@
     right: 1rem;
 }
 
-.logs__table .rt-tr:hover .logs__cell--block-button {
+.logs__table .logs__row:hover .logs__cell--block-button {
     visibility: visible;
     opacity: 1;
 }
@@ -123,4 +119,41 @@
     background: rgba(255, 255, 255, 0.8);
     transition: all .3s ease;
     height: 100%;
+}
+
+.logs__table {
+    background-color: var(--white);
+    border: 0;
+    border-radius: 8px;
+    min-height: 42rem;
+    max-height: 95vh;
+    max-width: 100%;
+    flex: auto 1;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    border-collapse: collapse;
+    overflow: auto
+}
+
+.logs__table .logs__cell--response,
+.logs__table .logs__cell--client {
+    display: flex;
+}
+
+.logs__cell--header__container {
+    display: flex;
+}
+
+.logs__table .logs__cell--header__container > .logs__cell--client {
+    display: flex;
+    justify-content: space-between;
+}
+
+@media screen and (max-width: 767.98px) {
+    .logs__table .logs__cell--response,
+    .logs__table .logs__cell--client {
+        display: none !important;
+    }
 }

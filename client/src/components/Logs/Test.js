@@ -33,32 +33,49 @@ const Header = () => {
     const onClickOff = () => dispatch(toggleDetailedLogs(false));
     const onClickOn = () => dispatch(toggleDetailedLogs(true));
 
-    return <div className="logs__cell--header__container px-5">
-        <div className="logs__cell--header__item logs__cell logs__cell--date logs__text--bold">{t('time_table_header')}</div>
-        <div className="logs__cell--header__item logs__cell logs__cell--domain logs__text--bold">{t('request_table_header')}</div>
-        <div className="logs__cell--header__item logs__cell logs__cell--response logs__text--bold">{t('response_table_header')}</div>
-        <div className="logs__cell--header__item logs__cell logs__cell--client logs__text--bold">{t('client_table_header')}
-            {<span>
-                        <svg
-                                className={classNames('icons icon--24 icon--green mr-2 cursor--pointer', {
-                                    'icon--selected': !isDetailed,
-                                })}
-                                onClick={onClickOff}
-                        >
-                            <title><Trans>compact</Trans></title>
-                            <use xlinkHref='#list' />
-                        </svg>
-                    <svg
-                            className={classNames('icons icon--24 icon--green cursor--pointer', {
-                                'icon--selected': isDetailed,
-                            })}
-                            onClick={onClickOn}
+    const HEADERS = [
+        {
+            className: 'logs__cell--date',
+            content: 'time_table_header',
+        },
+        {
+            className: 'logs__cell--domain',
+            content: 'request_table_header',
+        },
+        {
+            className: 'logs__cell--response',
+            content: 'response_table_header',
+        },
+        {
+            className: 'logs__cell--client',
+            content: <>
+                {t('client_table_header')}
+                {<span>
+                    <svg className={classNames('icons icon--24 icon--green cursor--pointer mr-2', { 'icon--selected': !isDetailed })}
+                         onClick={onClickOff}
                     >
-                        <title><Trans>default</Trans></title>
-                        <use xlinkHref='#detailed_list' />
+                    <title>{t('compact')}</title>
+                    <use xlinkHref='#list' /></svg>
+                <svg className={classNames('icons icon--24 icon--green cursor--pointer', { 'icon--selected': isDetailed })}
+                     onClick={onClickOn}
+                >
+                    <title>{t('default')}</title>
+                    <use xlinkHref='#detailed_list' />
                     </svg>
-                        </span>}
-        </div></div>;
+            </span>}
+            </>,
+        },
+    ];
+
+    const renderHeaders = ({ content, className }, idx) => <div
+            key={idx}
+            className={classNames('logs__cell--header__item logs__cell logs__text--bold', className)}>
+        {typeof content === 'string' ? t(content) : content}
+    </div>;
+
+    return <div className="logs__cell--header__container px-5">
+        {HEADERS.map(renderHeaders)}
+    </div>;
 };
 
 const Example = (props) => {
@@ -136,7 +153,10 @@ const Example = (props) => {
         //     }
         // };
         // todo handle last page
-        dispatch(getLogs({ older_than: oldest, page }));
+        dispatch(getLogs({
+            older_than: oldest,
+            page,
+        }));
     };
 
 
@@ -170,43 +190,37 @@ const Example = (props) => {
     // todo test if this really produce optimization
     const Test = useCallback(TestCell, [items]);
 
-    // todo extract react-table styles
     return <InfiniteLoader
             isItemLoaded={getIsItemLoaded}
             itemCount={itemCount}
             loadMoreItems={loadMoreItems}
     >
-        {({ onItemsRendered, ref }) => <div className='ReactTable logs__table logs__table--new'>
-            {(isLoading || processingGetLogs) && <div className="-loading -active loading__container">
-                <div className="-loading-inner">
-                    <Loading />
-                    <h6 className="loading__text">Loading...</h6>
-                </div>
-            </div>}
-            <div className="rt-table" role="grid">
-                <Header />
-                {itemCount === 0 && !processingGetLogs
-                    ? <label className="logs__no-data logs__text--bold">{t('nothing_found')}</label>
-                    : <FixedSizeList
-                                className="mw-100"
-                                width={1176}
-                                height={1600}
-                                itemCount={itemCount}
-                                itemSize={isDetailed ? 80 : 50}
-                                onItemsRendered={onItemsRendered}
-                                ref={ref}
-                        >
-                            {({
-                                index,
-                                style,
-                            }) => <Test style={style}
-                                        item={items?.[index]}
-                                        isSmallScreen={isSmallScreen}
-                                        setDetailedDataCurrent={setDetailedDataCurrent}
-                                        setButtonType={setButtonType}
-                                        setModalOpened={setModalOpened} />}
-                        </FixedSizeList>}
-            </div>
+        {({ onItemsRendered, ref }) => <div className='logs__table'>
+            {(isLoading || processingGetLogs) && <Loading />}
+            <Header />
+            {itemCount === 0 && !processingGetLogs
+                ? <label className="logs__no-data logs__text--bold">{t('nothing_found')}</label>
+                : <FixedSizeList
+                            className="mw-100"
+                            width={1176}
+                            height={1600}
+                            itemCount={itemCount}
+                            itemSize={isDetailed ? 80 : 50}
+                            onItemsRendered={onItemsRendered}
+                            ref={ref}
+                    >
+                        {({
+                            index,
+                            style,
+                        }) => <Test
+                                style={style}
+                                item={items?.[index]}
+                                isSmallScreen={isSmallScreen}
+                                setDetailedDataCurrent={setDetailedDataCurrent}
+                                setButtonType={setButtonType}
+                                setModalOpened={setModalOpened}
+                        />}
+                    </FixedSizeList>}
         </div>}
     </InfiniteLoader>;
 };

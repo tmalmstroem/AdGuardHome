@@ -8,13 +8,11 @@ import queryString from 'query-string';
 import classNames from 'classnames';
 import {
     BLOCK_ACTIONS,
-    TABLE_DEFAULT_PAGE_SIZE,
     TABLE_FIRST_PAGE,
     SMALL_SCREEN_SIZE,
 } from '../../helpers/constants';
 import Loading from '../ui/Loading';
 import Filters from './Filters';
-import Table from './Table';
 import Disabled from './Disabled';
 import { getFilteringStatus } from '../../actions/filtering';
 import { getClients } from '../../actions';
@@ -26,9 +24,8 @@ import {
     setFilteredLogs,
 } from '../../actions/queryLogs';
 import { addSuccessToast } from '../../actions/toasts';
-import './Logs.css';
-import './Test.css';
 import Example from './Test';
+import './Test.css';
 
 const processContent = (data, buttonType) => Object.entries(data)
     .map(([key, value]) => {
@@ -97,22 +94,13 @@ const Logs = (props) => {
     }, [response_status, search]);
 
     const {
-        filtering,
         setLogsPage,
-        setLogsPagination,
         toggleDetailedLogs,
-        dashboard,
-        dnsConfig,
         queryLogs: {
             enabled,
             processingGetConfig,
             processingAdditionalLogs,
             processingGetLogs,
-            oldest,
-            logs,
-            pages,
-            page,
-            isDetailed,
         },
     } = props;
 
@@ -125,17 +113,6 @@ const Logs = (props) => {
     };
 
     const closeModal = () => setModalOpened(false);
-
-    const getLogs = (older_than, page, initial) => {
-        if (enabled) {
-            props.getLogs({
-                older_than,
-                page,
-                pageSize: TABLE_DEFAULT_PAGE_SIZE,
-                initial,
-            });
-        }
-    };
 
     useEffect(() => {
         try {
@@ -206,37 +183,11 @@ const Logs = (props) => {
                         processingAdditionalLogs={processingAdditionalLogs}
                         refreshLogs={refreshLogs}
                     />
-                    NEW TABLE
                     <Example isLoading={isLoading}
                              isSmallScreen={isSmallScreen}
                              setDetailedDataCurrent={setDetailedDataCurrent}
                              setButtonType={setButtonType}
                              setModalOpened={setModalOpened}
-                    />
-                    <Table
-                        isLoading={isLoading}
-                        setIsLoading={setIsLoading}
-                        logs={logs}
-                        pages={pages}
-                        page={page}
-                        autoClients={dashboard.autoClients}
-                        oldest={oldest}
-                        filtering={filtering}
-                        processingGetLogs={processingGetLogs}
-                        processingGetConfig={processingGetConfig}
-                        isDetailed={isDetailed}
-                        setLogsPagination={setLogsPagination}
-                        setLogsPage={setLogsPage}
-                        toggleDetailedLogs={toggleDetailedLogs}
-                        getLogs={getLogs}
-                        setRules={props.setRules}
-                        addSuccessToast={props.addSuccessToast}
-                        getFilteringStatus={props.getFilteringStatus}
-                        dnssec_enabled={dnsConfig.dnssec_enabled}
-                        setDetailedDataCurrent={setDetailedDataCurrent}
-                        setButtonType={setButtonType}
-                        setModalOpened={setModalOpened}
-                        isSmallScreen={isSmallScreen}
                     />
                     <Modal portalClassName='grid' isOpen={isSmallScreen && isModalOpened}
                            onRequestClose={closeModal}

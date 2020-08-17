@@ -144,7 +144,7 @@ const DomainCell = (props) => {
     const details = [ip, protocol].filter(Boolean)
         .join(', ');
 
-    return <div className="logs__row o-hidden logs__cell logs__cell logs__cell--domain">
+    return <div className="d-flex o-hidden logs__cell logs__cell logs__cell--domain">
         {dnssec_enabled && getIconTooltip({
             className: lockIconClass,
             tooltipClass: 'py-4 px-5 pb-45',
@@ -221,7 +221,7 @@ const ResponseCell = ({
     const detailedInfo = isBlocked ? filter : formattedElapsedMs;
 
 
-    return <div className="logs__row logs__cell logs__cell--response">
+    return <div className="logs__cell logs__cell--response">
         {getIconTooltip({
             className: classNames('icons mr-4 icon--24 icon--lightgray', { 'my-3': isDetailed }),
             columnClass: 'grid grid--limited',
@@ -305,7 +305,7 @@ const ClientCell = ({
         </div>;
     };
 
-    return <div className="logs__row o-hidden h-100 logs__cell logs__cell--client">
+    return <div className="o-hidden h-100 logs__cell logs__cell--client">
         {getIconTooltip({
             className: hintClass,
             columnClass: 'grid grid--limited',
@@ -449,11 +449,12 @@ const TestCell = (props) => {
 
     const isDetailed = useSelector((state) => state.queryLogs.isDetailed);
 
-    const className = classNames('rt-tr logs__row-separation-line px-5',
+    const className = classNames('d-flex px-5 logs__row logs__row--separation',
         `logs__row--${FILTERED_STATUS_TO_META_MAP?.[reason]?.COLOR ?? QUERY_STATUS_COLORS.WHITE}`, {
             'logs__cell--detailed': isDetailed,
         });
 
+    // todo make table semantic
     return <div style={style} className={className} onClick={onClick}>
         <DateCell {...item} />
         <DomainCell {...item} />
