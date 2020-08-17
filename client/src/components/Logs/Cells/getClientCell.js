@@ -3,10 +3,10 @@ import { nanoid } from 'nanoid';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
-import { formatClientCell } from '../../../helpers/formatClientCell';
 import getIconTooltip from './getIconTooltip';
 import { checkFiltered } from '../../../helpers/helpers';
 import { BLOCK_ACTIONS } from '../../../helpers/constants';
+import { renderFormattedClientCell } from '../../../helpers/renderFormattedClientCell';
 
 const getClientCell = ({
     row, t, isDetailed, toggleBlocking, autoClients, processingRules,
@@ -84,7 +84,7 @@ const getClientCell = ({
             })}
             <div className={nameClass}>
                 <div data-tip={true} data-for={id}>
-                    {formatClientCell(row, isDetailed)}
+                    {renderFormattedClientCell(row.value, row.original.info, isDetailed, true)}
                 </div>
 
                 {isDetailed && name && !whoisAvailable && (

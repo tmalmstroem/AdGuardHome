@@ -311,10 +311,9 @@
     display: none;
 }
 
-/* todo invert hiding logic, hide client header */
 .logs__table--new .logs__cell--response,
 .logs__table--new .logs__cell--client {
-    display: none;
+    display: flex;
 }
 
 .logs__cell--header__container {
@@ -326,16 +325,19 @@
     justify-content: space-between;
 }
 
+@media screen and (max-width: 767.98px) {
+    .logs__table--new .logs__cell--response,
+    .logs__table--new .logs__cell--client {
+        display: none !important;
+    }
+}
+
 @media screen and (min-width: 768px) {
     .logs__table .rt-thead .rt-th:nth-child(3),
     .logs__table .rt-thead .rt-th:nth-child(4),
     .logs__table .rt-tbody .rt-td:nth-child(3),
     .logs__table .rt-tbody .rt-td:nth-child(4) {
         display: block;
-    }
-    .logs__table--new .logs__cell--response,
-    .logs__table--new .logs__cell--client{
-        display: flex;
     }
 }
 

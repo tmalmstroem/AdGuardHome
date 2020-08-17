@@ -5,7 +5,6 @@ import { nanoid } from 'nanoid';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
-import { formatClientCell } from '../../../helpers/formatClientCell';
 import {
     checkFiltered, formatElapsedMs, captitalizeWords, formatDateTime, formatTime, processContent,
 } from '../../../helpers/helpers';
@@ -23,7 +22,7 @@ import { getSourceData } from '../../../helpers/trackers/trackers';
 import { toggleBlocking } from '../../../actions';
 import '../Test.css';
 import '../Logs.css';
-import Loading from '../../ui/Loading';
+import { renderFormattedClientCell } from '../../../helpers/renderFormattedClientCell';
 
 const getFilterName = (filters, whitelistFilters, filterId, t) => {
     if (filterId === CUSTOM_FILTERING_RULES_ID) {
@@ -55,7 +54,7 @@ const DateCell = ({ time }) => {
     const formattedTime = formatTime(time, DEFAULT_TIME_FORMAT);
     const formattedDate = formatDateTime(time, DEFAULT_SHORT_DATE_FORMAT_OPTIONS);
 
-    return <div className="logs__cell logs__cell logs__cell--date">
+    return <div className="logs__cell logs__cell logs__cell--date text-truncate">
         <div className="logs__time" title={formattedTime}>{formattedTime}</div>
         {isDetailed && <div className="detailed-info d-none d-sm-block text-truncate"
                             title={formattedDate}>{formattedDate}</div>}
@@ -138,7 +137,7 @@ const DomainCell = (props) => {
         place: 'bottom',
     });
 
-    const valueClass = classNames('w-100', {
+    const valueClass = classNames('w-100 text-truncate', {
         'px-2 d-flex justify-content-center flex-column': isDetailed,
     });
 
@@ -319,7 +318,7 @@ const ClientCell = ({
         })}
         <div className={nameClass}>
             <div data-tip={true} data-for={id}>
-                {formatClientCell({ value: client, original: { info } }, isDetailed)}
+                {renderFormattedClientCell(client, info, isDetailed, true)}
             </div>
             {isDetailed && name && !whoisAvailable
             && <div className="detailed-info d-none d-sm-block logs__text"

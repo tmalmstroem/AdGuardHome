@@ -10,7 +10,6 @@ import BlockedDomains from './BlockedDomains';
 
 import PageTitle from '../ui/PageTitle';
 import Loading from '../ui/Loading';
-import { BLOCK_ACTIONS } from '../../helpers/constants';
 import './Dashboard.css';
 
 class Dashboard extends Component {
@@ -39,14 +38,6 @@ class Dashboard extends Component {
                 <Trans>{buttonText}</Trans>
             </button>
         );
-    };
-
-    toggleClientStatus = (type, ip) => {
-        const confirmMessage = type === BLOCK_ACTIONS.BLOCK ? 'client_confirm_block' : 'client_confirm_unblock';
-
-        if (window.confirm(this.props.t(confirmMessage, { ip }))) {
-            this.props.toggleClientBlock(type, ip);
-        }
     };
 
     render() {
@@ -122,7 +113,6 @@ class Dashboard extends Component {
                                 clients={dashboard.clients}
                                 autoClients={dashboard.autoClients}
                                 refreshButton={refreshButton}
-                                toggleClientStatus={this.toggleClientStatus}
                                 processingAccessSet={access.processingSet}
                                 disallowedClients={access.disallowed_clients}
                             />
