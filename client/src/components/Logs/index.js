@@ -25,7 +25,7 @@ import {
 } from '../../actions/queryLogs';
 import { addSuccessToast } from '../../actions/toasts';
 import Example from './Test';
-import './Test.css';
+import './Logs.css';
 
 const processContent = (data, buttonType) => Object.entries(data)
     .map(([key, value]) => {

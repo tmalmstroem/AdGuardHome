@@ -20,9 +20,8 @@ import getIconTooltip from './getIconTooltip';
 
 import { getSourceData } from '../../../helpers/trackers/trackers';
 import { toggleBlocking } from '../../../actions';
-import '../Test.css';
-import '../Logs.css';
 import { renderFormattedClientCell } from '../../../helpers/renderFormattedClientCell';
+import '../Logs.css';
 
 const getFilterName = (filters, whitelistFilters, filterId, t) => {
     if (filterId === CUSTOM_FILTERING_RULES_ID) {

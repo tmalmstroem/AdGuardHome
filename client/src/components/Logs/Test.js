@@ -199,7 +199,7 @@ const Example = (props) => {
             {(isLoading || processingGetLogs) && <Loading />}
             <Header />
             {itemCount === 0 && !processingGetLogs
-                ? <label className="logs__no-data logs__text--bold">{t('nothing_found')}</label>
+                ? <label className="logs__no-data">{t('nothing_found')}</label>
                 : <FixedSizeList
                             className="mw-100"
                             width={1176}
