@@ -11,7 +11,6 @@ import { getTlsStatus } from './encryption';
 import apiClient from '../api/Api';
 import { addErrorToast, addNoticeToast, addSuccessToast } from './toasts';
 import { getFilteringStatus, setRules } from './filtering';
-import i18n from '../i18n';
 
 export const toggleSettingStatus = createAction('SETTING_STATUS_TOGGLE');
 export const showSettingsFailure = createAction('SETTINGS_FAILURE_SHOW');
@@ -505,16 +504,15 @@ export const toggleBlocking = (type, domain) => async (dispatch, getState) => {
 
     if (matchPreparedBlockingRule) {
         dispatch(setRules(userRules.replace(`${blockingRule}`, '')));
-        // todo: update translation on language change
-        dispatch(addSuccessToast(`${i18n.t('rule_removed_from_custom_filtering_toast')}: ${blockingRule}`));
+        dispatch(addSuccessToast({ key: 'rule_removed_from_custom_filtering_toast', options: { rule: blockingRule } }));
     } else if (!matchPreparedUnblockingRule) {
         dispatch(setRules(`${userRules}${lineEnding}${unblockingRule}\n`));
-        dispatch(addSuccessToast(`${i18n.t('rule_added_to_custom_filtering_toast')}: ${unblockingRule}`));
+        dispatch(addSuccessToast({ key: 'rule_added_to_custom_filtering_toast', options: { rule: unblockingRule } }));
     } else if (matchPreparedUnblockingRule) {
-        dispatch(addSuccessToast(`${i18n.t('rule_added_to_custom_filtering_toast')}: ${unblockingRule}`));
+        dispatch(addSuccessToast({ key: 'rule_added_to_custom_filtering_toast', options: { rule: unblockingRule } }));
         return;
     } else if (!matchPreparedBlockingRule) {
-        dispatch(addSuccessToast(`${i18n.t('rule_removed_from_custom_filtering_toast')}: ${blockingRule}`));
+        dispatch(addSuccessToast({ key: 'rule_removed_from_custom_filtering_toast', options: { rule: blockingRule } }));
         return;
     }
 

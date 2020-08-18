@@ -15,7 +15,6 @@
     --white80: rgba(255, 255, 255, 0.8);
 }
 
-/* todo remove unused styles */
 .logs__text {
     padding: 0 1px;
     text-overflow: ellipsis;
@@ -166,21 +165,6 @@
     .logs__table .logs__cell--response,
     .logs__table .logs__cell--client {
         display: none !important;
-    }
-}
-
-@media (max-width: 575px) {
-    /* todo make the same styles */
-    .logs__table .rt-tr {
-        height: 3.125rem;
-    }
-
-    .logs__table .rt-tbody .rt-td {
-        padding: 0.625rem 1rem 0.875rem 0;
-    }
-
-    .logs__table {
-        min-height: 42rem;
     }
 }
 

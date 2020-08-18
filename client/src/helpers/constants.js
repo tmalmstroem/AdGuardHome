@@ -494,3 +494,17 @@ export const SECONDS_IN_HOUR = 60 * 60;
 
 // todo change api and add to documentation
 export const QUERY_LOGS_SEARCH_LIMIT = 500;
+
+export const TOAST_TRANSITION_TIMEOUT = 500;
+
+export const TOAST_TYPES = {
+    SUCCESS: 'success',
+    ERROR: 'error',
+    NOTICE: 'notice',
+};
+
+export const TOAST_TIMEOUTS = {
+    [TOAST_TYPES.SUCCESS]: 5000,
+    [TOAST_TYPES.ERROR]: 30000,
+    [TOAST_TYPES.NOTICE]: 30000,
+};
