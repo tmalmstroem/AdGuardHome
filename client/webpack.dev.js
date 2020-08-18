@@ -46,9 +46,6 @@ const getDevServerConfig = (proxyUrl = BASE_URL) => {
     };
 };
 
-// todo fix Warning: Invalid DOM property `enable-background`. Did you mean `enableBackground`?
-//  and Warning: Invalid DOM property `stop-color`. Did you mean `stopColor`?
-//  in the chrome 84.0.4147.125 during watch:hot
 module.exports = merge(common, {
     devtool: 'eval-source-map',
     module: {

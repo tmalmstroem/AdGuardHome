@@ -15,6 +15,7 @@ import { getTrackerData } from './trackers/trackers';
 
 import {
     CHECK_TIMEOUT,
+    CUSTOM_FILTERING_RULES_ID,
     DEFAULT_DATE_FORMAT_OPTIONS,
     DEFAULT_LANGUAGE,
     DEFAULT_TIME_FORMAT,
@@ -745,4 +746,24 @@ export const sortIp = (a, b) => {
         console.error(e);
         return 0;
     }
+};
+
+/**
+ * @param {array} filters
+ * @param {array} whitelistFilters
+ * @param {number} filterId
+ * @param {function} t - translate
+ * @returns {string}
+ */
+export const getFilterName = (filters, whitelistFilters, filterId, t) => {
+    if (filterId === CUSTOM_FILTERING_RULES_ID) {
+        return t('custom_filter_rules');
+    }
+
+    const matchIdPredicate = (filter) => filter.id === filterId;
+    const filter = filters.find(matchIdPredicate) || whitelistFilters.find(matchIdPredicate);
+
+    const filterName = filter ? filter.name : t('unknown_filter', { filterId });
+
+    return filterName;
 };

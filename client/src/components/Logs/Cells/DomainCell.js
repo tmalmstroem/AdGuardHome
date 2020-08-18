@@ -1,8 +1,8 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import classNames from 'classnames';
-import PropTypes from 'prop-types';
+import propTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
-import getIconTooltip from './getIconTooltip';
 import {
     DEFAULT_SHORT_DATE_FORMAT_OPTIONS,
     LONG_TIME_FORMAT,
@@ -10,17 +10,19 @@ import {
 } from '../../../helpers/constants';
 import { captitalizeWords, formatDateTime, formatTime } from '../../../helpers/helpers';
 import { getSourceData } from '../../../helpers/trackers/trackers';
+import getIconTooltip from './getIconTooltip';
 
-const getDomainCell = (props) => {
-    const {
-        row, isDetailed, dnssec_enabled,
-    } = props;
-
+const DomainCell = ({
+    answer_dnssec,
+    client_proto,
+    domain,
+    time,
+    tracker,
+    type,
+}) => {
     const { t } = useTranslation();
-
-    const {
-        tracker, type, answer_dnssec, client_proto, domain, time,
-    } = row.original;
+    const dnssec_enabled = useSelector((state) => state.dnsConfig.dnssec_enabled);
+    const isDetailed = useSelector((state) => state.queryLogs.isDetailed);
 
     const hasTracker = !!tracker;
 
@@ -53,8 +55,8 @@ const getDomainCell = (props) => {
         name_table_header: tracker?.name,
         category_label: hasTracker && captitalizeWords(tracker.category),
         source_label: sourceData
-            && <a href={sourceData.url} target="_blank" rel="noopener noreferrer"
-                  className="link--green">{sourceData.name}</a>,
+                && <a href={sourceData.url} target="_blank" rel="noopener noreferrer"
+                      className="link--green">{sourceData.name}</a>,
     };
 
     const renderGrid = (content, idx) => {
@@ -84,41 +86,40 @@ const getDomainCell = (props) => {
         place: 'bottom',
     });
 
-    const valueClass = classNames('w-100', {
+    const valueClass = classNames('w-100 text-truncate', {
         'px-2 d-flex justify-content-center flex-column': isDetailed,
     });
 
     const details = [ip, protocol].filter(Boolean)
         .join(', ');
 
-    return (
-        <div className="logs__row o-hidden">
-            {dnssec_enabled && getIconTooltip({
-                className: lockIconClass,
-                tooltipClass: 'py-4 px-5 pb-45',
-                canShowTooltip: answer_dnssec,
-                xlinkHref: 'lock',
-                columnClass: 'w-100',
-                content: 'validated_with_dnssec',
-                placement: 'bottom',
-            })}
-            {trackerHint}
-            <div className={valueClass}>
-                <div className="text-truncate" title={domain}>{domain}</div>
-                {details && isDetailed
-                && <div className="detailed-info d-none d-sm-block text-truncate"
-                        title={details}>{details}</div>}
-            </div>
+    return <div className="d-flex o-hidden logs__cell logs__cell logs__cell--domain">
+        {dnssec_enabled && getIconTooltip({
+            className: lockIconClass,
+            tooltipClass: 'py-4 px-5 pb-45',
+            canShowTooltip: answer_dnssec,
+            xlinkHref: 'lock',
+            columnClass: 'w-100',
+            content: 'validated_with_dnssec',
+            placement: 'bottom',
+        })}
+        {trackerHint}
+        <div className={valueClass}>
+            <div className="text-truncate" title={domain}>{domain}</div>
+            {details && isDetailed
+            && <div className="detailed-info d-none d-sm-block text-truncate"
+                    title={details}>{details}</div>}
         </div>
-    );
+    </div>;
 };
 
-getDomainCell.propTypes = {
-    row: PropTypes.object.isRequired,
-    t: PropTypes.func.isRequired,
-    isDetailed: PropTypes.bool.isRequired,
-    autoClients: PropTypes.array.isRequired,
-    dnssec_enabled: PropTypes.bool.isRequired,
+DomainCell.propTypes = {
+    answer_dnssec: propTypes.bool.isRequired,
+    client_proto: propTypes.string.isRequired,
+    domain: propTypes.string.isRequired,
+    time: propTypes.string.isRequired,
+    type: propTypes.string.isRequired,
+    tracker: propTypes.object,
 };
 
-export default getDomainCell;
+export default DomainCell;

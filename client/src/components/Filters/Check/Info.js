@@ -20,10 +20,11 @@ const getFilterName = (id, filters, whitelistFilters, t) => {
         return t('filtered_custom_rules');
     }
 
-    const filter = filters.find((filter) => filter.id === id)
-        || whitelistFilters.find((filter) => filter.id === id);
+    const matchIdPredicate = (filter) => filter.id === id;
 
-    if (filter && filter.name) {
+    const filter = filters.find(matchIdPredicate) || whitelistFilters.find(matchIdPredicate);
+
+    if (filter?.name) {
         return t('query_log_filtered', { filter: filter.name });
     }
 

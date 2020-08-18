@@ -24,7 +24,7 @@ import {
     setFilteredLogs,
 } from '../../actions/queryLogs';
 import { addSuccessToast } from '../../actions/toasts';
-import Example from './Test';
+import InfiniteTable from './InfiniteTable';
 import './Logs.css';
 
 const processContent = (data, buttonType) => Object.entries(data)
@@ -183,7 +183,7 @@ const Logs = (props) => {
                         processingAdditionalLogs={processingAdditionalLogs}
                         refreshLogs={refreshLogs}
                     />
-                    <Example isLoading={isLoading}
+                    <InfiniteTable isLoading={isLoading}
                              isSmallScreen={isSmallScreen}
                              setDetailedDataCurrent={setDetailedDataCurrent}
                              setButtonType={setButtonType}
