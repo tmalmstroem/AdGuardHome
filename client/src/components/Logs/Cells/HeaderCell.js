@@ -7,7 +7,9 @@ const HeaderCell = ({ content, className }, idx) => {
     const { t } = useTranslation();
     return <div
             key={idx}
-            className={classNames('logs__cell--header__item logs__cell logs__text--bold', className)}>
+            className={classNames('logs__cell--header__item logs__cell logs__text--bold', className)}
+            role="columnheader"
+    >
         {typeof content === 'string' ? t(content) : content}
     </div>;
 };

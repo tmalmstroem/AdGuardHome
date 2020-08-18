@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { FixedSizeList } from 'react-window';
 import InfiniteLoader from 'react-window-infinite-loader';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
@@ -47,15 +47,12 @@ const InfiniteTable = ({
 
     const getIsItemLoaded = (index) => index < items.length - 1;
 
-    // todo test if this really produce optimization
-    const Row = useCallback(Cells, [items]);
-
     return <InfiniteLoader
             isItemLoaded={getIsItemLoaded}
             itemCount={total}
             loadMoreItems={loadMoreItems}
     >
-        {({ onItemsRendered, ref }) => <div className='logs__table'>
+        {({ onItemsRendered, ref }) => <div className='logs__table' role="grid">
             {(isLoading || processingGetLogs) && <Loading />}
             <Header />
             {total === 0 && !processingGetLogs
@@ -72,7 +69,7 @@ const InfiniteTable = ({
                         {({
                             index,
                             style,
-                        }) => <Row
+                        }) => <Cells
                                 style={style}
                                 item={items?.[index]}
                                 isSmallScreen={isSmallScreen}

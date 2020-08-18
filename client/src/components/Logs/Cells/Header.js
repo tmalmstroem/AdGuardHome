@@ -46,7 +46,7 @@ const Header = () => {
         },
     ];
 
-    return <div className="logs__cell--header__container px-5">
+    return <div className="logs__cell--header__container px-5" role="row">
         {HEADERS.map(HeaderCell)}
     </div>;
 };

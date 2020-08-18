@@ -93,7 +93,7 @@ const DomainCell = ({
     const details = [ip, protocol].filter(Boolean)
         .join(', ');
 
-    return <div className="d-flex o-hidden logs__cell logs__cell logs__cell--domain">
+    return <div className="d-flex o-hidden logs__cell logs__cell logs__cell--domain" role="gridcell">
         {dnssec_enabled && getIconTooltip({
             className: lockIconClass,
             tooltipClass: 'py-4 px-5 pb-45',

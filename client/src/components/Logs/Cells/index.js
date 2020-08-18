@@ -150,8 +150,7 @@ const Cells = ({
             'logs__cell--detailed': isDetailed,
         });
 
-    // todo make table semantic
-    return <div style={style} className={className} onClick={onClick}>
+    return <div style={style} className={className} onClick={onClick} role="row">
         <DateCell {...item} />
         <DomainCell {...item} />
         <ResponseCell {...item} />

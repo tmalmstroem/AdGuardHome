@@ -67,7 +67,7 @@ const ResponseCell = ({
     const detailedInfo = isBlocked ? filter : formattedElapsedMs;
 
 
-    return <div className="logs__cell logs__cell--response">
+    return <div className="logs__cell logs__cell--response" role="gridcell">
         {getIconTooltip({
             className: classNames('icons mr-4 icon--24 icon--lightgray', { 'my-3': isDetailed }),
             columnClass: 'grid grid--limited',

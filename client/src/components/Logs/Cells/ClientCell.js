@@ -74,7 +74,7 @@ const ClientCell = ({
         </div>;
     };
 
-    return <div className="o-hidden h-100 logs__cell logs__cell--client">
+    return <div className="o-hidden h-100 logs__cell logs__cell--client" role="gridcell">
         {getIconTooltip({
             className: hintClass,
             columnClass: 'grid grid--limited',

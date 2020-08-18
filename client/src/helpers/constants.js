@@ -492,9 +492,6 @@ export const MEDIUM_SCREEN_SIZE = 1023;
 
 export const SECONDS_IN_HOUR = 60 * 60;
 
-// todo change api and add to documentation
-export const QUERY_LOGS_SEARCH_LIMIT = 500;
-
 export const TOAST_TRANSITION_TIMEOUT = 500;
 
 export const TOAST_TYPES = {
