@@ -240,9 +240,7 @@ func TestBlockedRequest(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Couldn't talk to server %s: %s", addr, err)
 	}
-	if reply.Rcode != dns.RcodeNameError {
-		t.Fatalf("Wrong response: %s", reply.String())
-	}
+	assert.Equal(t, dns.RcodeRefused, reply.Rcode)
 
 	err = s.Stop()
 	if err != nil {
@@ -404,7 +402,7 @@ func TestBlockCNAME(t *testing.T) {
 	req := createTestMessage("badhost.")
 	reply, err := dns.Exchange(req, addr.String())
 	assert.Nil(t, err, nil)
-	assert.Equal(t, dns.RcodeNameError, reply.Rcode)
+	assert.Equal(t, dns.RcodeRefused, reply.Rcode)
 
 	// 'whitelist.example.org' has a canonical name 'null.example.org' which is blocked by filters
 	//   but 'whitelist.example.org' is in a whitelist:
@@ -419,7 +417,7 @@ func TestBlockCNAME(t *testing.T) {
 	req = createTestMessage("example.org.")
 	reply, err = dns.Exchange(req, addr.String())
 	assert.Nil(t, err)
-	assert.Equal(t, dns.RcodeNameError, reply.Rcode)
+	assert.Equal(t, dns.RcodeRefused, reply.Rcode)
 
 	_ = s.Stop()
 }
