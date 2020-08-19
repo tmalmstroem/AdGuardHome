@@ -29,10 +29,10 @@ import ResponseCell from './ResponseCell';
 import ClientCell from './ClientCell';
 import '../Logs.css';
 
-const Cells = ({
+const Row = ({
     style,
-    item,
-    item: { reason },
+    rowProps,
+    rowProps: { reason },
     isSmallScreen,
     setDetailedDataCurrent,
     setButtonType,
@@ -64,7 +64,7 @@ const Cells = ({
             rule,
             originalResponse,
             status,
-        } = item;
+        } = rowProps;
 
         const hasTracker = !!tracker;
 
@@ -151,16 +151,16 @@ const Cells = ({
         });
 
     return <div style={style} className={className} onClick={onClick} role="row">
-        <DateCell {...item} />
-        <DomainCell {...item} />
-        <ResponseCell {...item} />
-        <ClientCell {...item} />
+        <DateCell {...rowProps} />
+        <DomainCell {...rowProps} />
+        <ResponseCell {...rowProps} />
+        <ClientCell {...rowProps} />
     </div>;
 };
 
-Cells.propTypes = {
+Row.propTypes = {
     style: propTypes.object.isRequired,
-    item: propTypes.shape({
+    rowProps: propTypes.shape({
         reason: propTypes.string.isRequired,
         answer_dnssec: propTypes.bool.isRequired,
         client: propTypes.string.isRequired,
@@ -192,4 +192,4 @@ Cells.propTypes = {
     setModalOpened: propTypes.func.isRequired,
 };
 
-export default Cells;
+export default Row;

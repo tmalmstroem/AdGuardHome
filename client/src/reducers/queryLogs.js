@@ -3,6 +3,7 @@ import { handleActions } from 'redux-actions';
 import * as actions from '../actions/queryLogs';
 import { DEFAULT_LOGS_FILTER, TABLE_DEFAULT_PAGE_SIZE } from '../helpers/constants';
 
+// todo remove page pages total logs and rename allLogs to logs
 const queryLogs = handleActions(
     {
         [actions.setLogsPagination]: (state, { payload }) => {
@@ -147,6 +148,7 @@ const queryLogs = handleActions(
         isFiltered: false,
         anonymize_client_ip: false,
         isDetailed: true,
+        isEntireLog: false,
     },
 );
 

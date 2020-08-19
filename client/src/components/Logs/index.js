@@ -25,7 +25,7 @@ import {
 } from '../../actions/queryLogs';
 import { addSuccessToast } from '../../actions/toasts';
 import InfiniteTable from './InfiniteTable';
-import Cells from './Cells';
+import Row from './Cells';
 import './Logs.css';
 
 const processContent = (data, buttonType) => Object.entries(data)
@@ -168,12 +168,11 @@ const Logs = (props) => {
     };
 
     const renderRow = ({
-        index,
-        items,
+        rowProps,
         style,
-    }) => <Cells
+    }) => <Row
             style={style}
-            item={items?.[index]}
+            rowProps={rowProps}
             isSmallScreen={isSmallScreen}
             setDetailedDataCurrent={setDetailedDataCurrent}
             setButtonType={setButtonType}
@@ -181,8 +180,7 @@ const Logs = (props) => {
     />;
 
     renderRow.propTypes = {
-        index: propTypes.number.isRequired,
-        items: propTypes.array.isRequired,
+        rowProps: propTypes.object.isRequired,
         style: propTypes.object.isRequired,
     };
 
