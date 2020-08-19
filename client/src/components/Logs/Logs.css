@@ -272,6 +272,7 @@
     font-weight: bold;
     text-align: center;
     padding-top: 21rem;
+    display: block;
 }
 
 .logs__loading {
@@ -303,7 +304,7 @@
     display: flex;
 }
 
-.logs__table .logs__cell--header__container > .logs__cell--client {
+.logs__table > .logs__cell--header__container > .logs__cell--client {
     display: flex;
     justify-content: space-between;
 }

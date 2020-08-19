@@ -62,30 +62,30 @@ const InfiniteTable = ({
         style: propTypes.object.isRequired,
     };
 
-    return <InfiniteLoader
-            isItemLoaded={getIsItemLoaded}
-            itemCount={total}
-            loadMoreItems={loadMoreItems}
-    >
-        {({ onItemsRendered, registerChild }) => <div className='logs__table' role='grid'>
-            {(isLoading || processingGetLogs) && <Loading />}
-            <Header />
-            {total === 0 && !processingGetLogs
-                ? <label className="logs__no-data">{t('nothing_found')}</label>
-                : <AutoSizer>
-                        {({ height, width }) => <FixedSizeList
-                                width={width}
-                                height={height}
-                                itemCount={items.length}
-                                itemSize={isDetailed ? DETAILED_CELL_HEIGHT : CELL_HEIGHT}
-                                onItemsRendered={onItemsRendered}
-                                ref={registerChild}
+    return <div className='logs__table' role='grid'>
+        {(isLoading || processingGetLogs) && <Loading />}
+        <Header />
+        {total === 0 && !processingGetLogs
+            ? <label className="logs__no-data">{t('nothing_found')}</label>
+            : <AutoSizer>
+            {({ height, width }) => <InfiniteLoader
+                                isItemLoaded={getIsItemLoaded}
+                                itemCount={total}
+                                loadMoreItems={loadMoreItems}
                         >
-                            {Row}
-                        </FixedSizeList>}
-                    </AutoSizer>}
-        </div>}
-    </InfiniteLoader>;
+                            {({ onItemsRendered, ref }) => <FixedSizeList
+                                    width={width}
+                                    height={height}
+                                    itemCount={items.length}
+                                    itemSize={isDetailed ? DETAILED_CELL_HEIGHT : CELL_HEIGHT}
+                                    onItemsRendered={onItemsRendered}
+                                    ref={ref}
+                            >
+                                {Row}
+                            </FixedSizeList>}
+                        </InfiniteLoader>}
+        </AutoSizer>}
+    </div>;
 };
 
 InfiniteTable.propTypes = {
