@@ -5,7 +5,6 @@ import { normalizeLogs, getParamsForClientsSearch, addClientInfo } from '../help
 import {
     DEFAULT_LOGS_FILTER,
     TABLE_DEFAULT_PAGE_SIZE,
-    TABLE_FIRST_PAGE,
 } from '../helpers/constants';
 import { addErrorToast, addSuccessToast } from './toasts';
 
@@ -71,8 +70,6 @@ const checkFilteredLogs = async (data, filter, dispatch, total) => {
     return totalData;
 };
 
-export const setLogsPagination = createAction('LOGS_PAGINATION');
-export const setLogsPage = createAction('SET_LOG_PAGE');
 export const toggleDetailedLogs = createAction('TOGGLE_DETAILED_LOGS');
 
 export const getLogsRequest = createAction('GET_LOGS_REQUEST');
@@ -82,7 +79,7 @@ export const getLogsSuccess = createAction('GET_LOGS_SUCCESS');
 export const getLogs = (config) => async (dispatch, getState) => {
     dispatch(getLogsRequest());
     try {
-        const { isFiltered, filter, page } = getState().queryLogs;
+        const { isFiltered, filter } = getState().queryLogs;
         const data = await getLogsWithParams({
             ...config,
             filter,
@@ -92,10 +89,6 @@ export const getLogs = (config) => async (dispatch, getState) => {
             const additionalData = await checkFilteredLogs(data, filter, dispatch);
             const updatedData = additionalData.logs ? { ...data, ...additionalData } : data;
             dispatch(getLogsSuccess(updatedData));
-            dispatch(setLogsPagination({
-                page,
-                pageSize: TABLE_DEFAULT_PAGE_SIZE,
-            }));
         } else {
             dispatch(getLogsSuccess(data));
         }
@@ -134,7 +127,6 @@ export const setFilteredLogs = (filter) => async (dispatch) => {
             ...updatedData,
             filter,
         }));
-        dispatch(setLogsPage(TABLE_FIRST_PAGE));
     } catch (error) {
         dispatch(addErrorToast({ error }));
         dispatch(setFilteredLogsFailure(error));

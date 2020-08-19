@@ -308,8 +308,6 @@ export const DEFAULT_LANGUAGE = 'en';
 
 export const TABLE_DEFAULT_PAGE_SIZE = 25;
 
-export const TABLE_FIRST_PAGE = 0;
-
 export const LEASES_TABLE_DEFAULT_PAGE_SIZE = 20;
 
 export const FILTERED_STATUS = {

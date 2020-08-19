@@ -8,7 +8,6 @@ import classNames from 'classnames';
 import propTypes from 'prop-types';
 import {
     BLOCK_ACTIONS,
-    TABLE_FIRST_PAGE,
     SMALL_SCREEN_SIZE,
 } from '../../helpers/constants';
 import Loading from '../ui/Loading';
@@ -22,6 +21,7 @@ import {
     refreshFilteredLogs,
     resetFilteredLogs,
     setFilteredLogs,
+    toggleDetailedLogs,
 } from '../../actions/queryLogs';
 import { addSuccessToast } from '../../actions/toasts';
 import InfiniteTable from './InfiniteTable';
@@ -61,18 +61,7 @@ const processContent = (data, buttonType) => Object.entries(data)
         </Fragment>;
     });
 
-const Logs = (props) => {
-    const {
-        setLogsPage,
-        toggleDetailedLogs,
-        queryLogs: {
-            enabled,
-            processingGetConfig,
-            processingAdditionalLogs,
-            processingGetLogs,
-        },
-    } = props;
-
+const Logs = () => {
     const dispatch = useDispatch();
     const history = useHistory();
 
@@ -81,7 +70,14 @@ const Logs = (props) => {
         search: search_url_param = '',
     } = queryString.parse(history.location.search);
 
-    const { filter, allLogs } = useSelector((state) => state.queryLogs, shallowEqual);
+    const {
+        enabled,
+        processingGetConfig,
+        processingAdditionalLogs,
+        processingGetLogs,
+    } = useSelector((state) => state.queryLogs, shallowEqual);
+    const filter = useSelector((state) => state.queryLogs.filter, shallowEqual);
+    const allLogs = useSelector((state) => state.queryLogs.allLogs, shallowEqual);
 
     const search = filter?.search || search_url_param;
     const response_status = filter?.response_status || response_status_url_param;
@@ -109,7 +105,7 @@ const Logs = (props) => {
     const mediaQueryHandler = (e) => {
         setIsSmallScreen(e.matches);
         if (e.matches) {
-            toggleDetailedLogs(false);
+            dispatch(toggleDetailedLogs(false));
         }
     };
 
@@ -127,7 +123,6 @@ const Logs = (props) => {
 
         (async () => {
             setIsLoading(true);
-            dispatch(setLogsPage(TABLE_FIRST_PAGE));
             dispatch(getFilteringStatus());
             dispatch(getClients());
             try {
@@ -160,7 +155,6 @@ const Logs = (props) => {
     const refreshLogs = async () => {
         setIsLoading(true);
         await Promise.all([
-            dispatch(setLogsPage(TABLE_FIRST_PAGE)),
             dispatch(refreshFilteredLogs()),
         ]);
         dispatch(addSuccessToast('query_log_updated'));
@@ -229,20 +223,6 @@ const Logs = (props) => {
         {enabled && !processingGetConfig && renderPage()}
         {!enabled && !processingGetConfig && <Disabled />}
     </>;
-};
-
-Logs.propTypes = {
-    getLogs: propTypes.func.isRequired,
-    queryLogs: propTypes.object.isRequired,
-    dashboard: propTypes.object.isRequired,
-    getFilteringStatus: propTypes.func.isRequired,
-    filtering: propTypes.object.isRequired,
-    setRules: propTypes.func.isRequired,
-    addSuccessToast: propTypes.func.isRequired,
-    setLogsPagination: propTypes.func.isRequired,
-    setLogsPage: propTypes.func.isRequired,
-    toggleDetailedLogs: propTypes.func.isRequired,
-    dnsConfig: propTypes.object.isRequired,
 };
 
 export default Logs;

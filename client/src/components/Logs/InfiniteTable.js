@@ -28,11 +28,12 @@ const InfiniteTable = ({
         oldest,
     } = useSelector((state) => state.queryLogs, shallowEqual);
 
-    // todo handle markup of the last 'page'
+    // todo handle markup of the last 'page' with offsets
     const loadMoreItems = () => dispatch(getLogs({ older_than: oldest }));
 
     const getIsItemLoaded = (index) => isEntireLog || index < items.length - 1;
 
+    // todo add sceleton on quick scroll?
     const Row = ({
         index,
         style,
