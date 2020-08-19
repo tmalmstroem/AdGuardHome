@@ -22,7 +22,7 @@ const queryLogs = handleActions(
                 oldest,
                 filter,
                 isFiltered,
-                allLogs: logs,
+                logs,
                 processingGetLogs: false,
             };
         },
@@ -39,16 +39,11 @@ const queryLogs = handleActions(
             const {
                 logs, oldest, older_than,
             } = payload;
-            let allLogs = logs;
-
-            if (older_than) {
-                allLogs = [...state.allLogs, ...logs];
-            }
 
             return {
                 ...state,
                 oldest,
-                allLogs,
+                logs: older_than ? [...state.logs, ...logs] : logs,
                 isEntireLog: logs.length < 1,
                 processingGetLogs: false,
             };
@@ -95,7 +90,7 @@ const queryLogs = handleActions(
         processingSetConfig: false,
         processingAdditionalLogs: false,
         interval: 1,
-        allLogs: [],
+        logs: [],
         enabled: true,
         oldest: '',
         filter: DEFAULT_LOGS_FILTER,

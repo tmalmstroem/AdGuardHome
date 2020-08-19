@@ -77,7 +77,7 @@ const Logs = () => {
         processingGetLogs,
     } = useSelector((state) => state.queryLogs, shallowEqual);
     const filter = useSelector((state) => state.queryLogs.filter, shallowEqual);
-    const allLogs = useSelector((state) => state.queryLogs.allLogs, shallowEqual);
+    const logs = useSelector((state) => state.queryLogs.logs, shallowEqual);
 
     const search = filter?.search || search_url_param;
     const response_status = filter?.response_status || response_status_url_param;
@@ -191,7 +191,7 @@ const Logs = () => {
         />
         <InfiniteTable
                 isLoading={isLoading}
-                items={allLogs}
+                items={logs}
                 renderRow={renderRow}
         />
         <Modal portalClassName='grid' isOpen={isSmallScreen && isModalOpened}
