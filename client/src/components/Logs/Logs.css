@@ -292,7 +292,6 @@
     align-items: stretch;
     width: 100%;
     border-collapse: collapse;
-    overflow: hidden;
 }
 
 .logs__table .logs__cell--response,

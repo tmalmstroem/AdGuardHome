@@ -12,6 +12,7 @@ import { getLogs } from '../../actions/queryLogs';
 const CELL_HEIGHT = 50;
 const DETAILED_CELL_HEIGHT = 80;
 const OVERSCAN_COUNT = 25;
+const HEADER_HEIGHT = CELL_HEIGHT;
 
 const InfiniteTable = ({
     isLoading,
@@ -28,12 +29,10 @@ const InfiniteTable = ({
         oldest,
     } = useSelector((state) => state.queryLogs, shallowEqual);
 
-    // todo handle markup of the last 'page' with offsets
     const loadMoreItems = () => dispatch(getLogs({ older_than: oldest }));
 
     const getIsItemLoaded = (index) => isEntireLog || index < items.length - 1;
 
-    // todo add sceleton on quick scroll?
     const Row = ({
         index,
         style,
@@ -57,7 +56,7 @@ const InfiniteTable = ({
                     >
                         {({ onItemsRendered, ref }) => <FixedSizeList
                                 width={width}
-                                height={height}
+                                height={height - HEADER_HEIGHT}
                                 itemCount={itemCount}
                                 itemSize={isDetailed ? DETAILED_CELL_HEIGHT : CELL_HEIGHT}
                                 onItemsRendered={onItemsRendered}
