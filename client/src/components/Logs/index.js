@@ -1,11 +1,11 @@
 import React, { Fragment, useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
 import { Trans } from 'react-i18next';
 import Modal from 'react-modal';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import queryString from 'query-string';
 import classNames from 'classnames';
+import propTypes from 'prop-types';
 import {
     BLOCK_ACTIONS,
     TABLE_FIRST_PAGE,
@@ -25,6 +25,7 @@ import {
 } from '../../actions/queryLogs';
 import { addSuccessToast } from '../../actions/toasts';
 import InfiniteTable from './InfiniteTable';
+import Cells from './Cells';
 import './Logs.css';
 
 const processContent = (data, buttonType) => Object.entries(data)
@@ -60,8 +61,18 @@ const processContent = (data, buttonType) => Object.entries(data)
         </Fragment>;
     });
 
-
 const Logs = (props) => {
+    const {
+        setLogsPage,
+        toggleDetailedLogs,
+        queryLogs: {
+            enabled,
+            processingGetConfig,
+            processingAdditionalLogs,
+            processingGetLogs,
+        },
+    } = props;
+
     const dispatch = useDispatch();
     const history = useHistory();
 
@@ -70,7 +81,7 @@ const Logs = (props) => {
         search: search_url_param = '',
     } = queryString.parse(history.location.search);
 
-    const { filter } = useSelector((state) => state.queryLogs, shallowEqual);
+    const { filter, allLogs } = useSelector((state) => state.queryLogs, shallowEqual);
 
     const search = filter?.search || search_url_param;
     const response_status = filter?.response_status || response_status_url_param;
@@ -81,6 +92,7 @@ const Logs = (props) => {
     const [isModalOpened, setModalOpened] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
+    const closeModal = () => setModalOpened(false);
 
     useEffect(() => {
         (async () => {
@@ -93,17 +105,6 @@ const Logs = (props) => {
         })();
     }, [response_status, search]);
 
-    const {
-        setLogsPage,
-        toggleDetailedLogs,
-        queryLogs: {
-            enabled,
-            processingGetConfig,
-            processingAdditionalLogs,
-            processingGetLogs,
-        },
-    } = props;
-
     const mediaQuery = window.matchMedia(`(max-width: ${SMALL_SCREEN_SIZE}px)`);
     const mediaQueryHandler = (e) => {
         setIsSmallScreen(e.matches);
@@ -111,8 +112,6 @@ const Logs = (props) => {
             toggleDetailedLogs(false);
         }
     };
-
-    const closeModal = () => setModalOpened(false);
 
     useEffect(() => {
         try {
@@ -168,70 +167,84 @@ const Logs = (props) => {
         setIsLoading(false);
     };
 
-    return (
-        <>
-            {enabled && processingGetConfig && <Loading />}
-            {enabled && !processingGetConfig && (
-                <>
-                    <Filters
-                        filter={{
-                            response_status,
-                            search,
-                        }}
-                        setIsLoading={setIsLoading}
-                        processingGetLogs={processingGetLogs}
-                        processingAdditionalLogs={processingAdditionalLogs}
-                        refreshLogs={refreshLogs}
-                    />
-                    <InfiniteTable isLoading={isLoading}
-                             isSmallScreen={isSmallScreen}
-                             setDetailedDataCurrent={setDetailedDataCurrent}
-                             setButtonType={setButtonType}
-                             setModalOpened={setModalOpened}
-                    />
-                    <Modal portalClassName='grid' isOpen={isSmallScreen && isModalOpened}
-                           onRequestClose={closeModal}
-                           style={{
-                               content: {
-                                   width: '100%',
-                                   height: 'fit-content',
-                                   left: 0,
-                                   top: 47,
-                                   padding: '1rem 1.5rem 1rem',
-                               },
-                               overlay: {
-                                   backgroundColor: 'rgba(0,0,0,0.5)',
-                               },
-                           }}
-                    >
-                        <svg
-                            className="icon icon--24 icon-cross d-block d-md-none cursor--pointer"
-                            onClick={closeModal}>
-                            <use xlinkHref="#cross" />
-                        </svg>
-                        {processContent(detailedDataCurrent, buttonType)}
-                    </Modal>
-                </>
-            )}
-            {!enabled && !processingGetConfig && (
-                <Disabled />
-            )}
-        </>
-    );
+    const renderRow = ({
+        index,
+        items,
+        style,
+    }) => <Cells
+            style={style}
+            item={items?.[index]}
+            isSmallScreen={isSmallScreen}
+            setDetailedDataCurrent={setDetailedDataCurrent}
+            setButtonType={setButtonType}
+            setModalOpened={setModalOpened}
+    />;
+
+    renderRow.propTypes = {
+        index: propTypes.number.isRequired,
+        items: propTypes.array.isRequired,
+        style: propTypes.object.isRequired,
+    };
+
+    const renderPage = () => <>
+        <Filters
+                filter={{
+                    response_status,
+                    search,
+                }}
+                setIsLoading={setIsLoading}
+                processingGetLogs={processingGetLogs}
+                processingAdditionalLogs={processingAdditionalLogs}
+                refreshLogs={refreshLogs}
+        />
+        <InfiniteTable
+                isLoading={isLoading}
+                items={allLogs}
+                renderRow={renderRow}
+        />
+        <Modal portalClassName='grid' isOpen={isSmallScreen && isModalOpened}
+               onRequestClose={closeModal}
+               style={{
+                   content: {
+                       width: '100%',
+                       height: 'fit-content',
+                       left: 0,
+                       top: 47,
+                       padding: '1rem 1.5rem 1rem',
+                   },
+                   overlay: {
+                       backgroundColor: 'rgba(0,0,0,0.5)',
+                   },
+               }}
+        >
+            <svg
+                    className="icon icon--24 icon-cross d-block d-md-none cursor--pointer"
+                    onClick={closeModal}>
+                <use xlinkHref="#cross" />
+            </svg>
+            {processContent(detailedDataCurrent, buttonType)}
+        </Modal>
+    </>;
+
+    return <>
+        {enabled && processingGetConfig && <Loading />}
+        {enabled && !processingGetConfig && renderPage()}
+        {!enabled && !processingGetConfig && <Disabled />}
+    </>;
 };
 
 Logs.propTypes = {
-    getLogs: PropTypes.func.isRequired,
-    queryLogs: PropTypes.object.isRequired,
-    dashboard: PropTypes.object.isRequired,
-    getFilteringStatus: PropTypes.func.isRequired,
-    filtering: PropTypes.object.isRequired,
-    setRules: PropTypes.func.isRequired,
-    addSuccessToast: PropTypes.func.isRequired,
-    setLogsPagination: PropTypes.func.isRequired,
-    setLogsPage: PropTypes.func.isRequired,
-    toggleDetailedLogs: PropTypes.func.isRequired,
-    dnsConfig: PropTypes.object.isRequired,
+    getLogs: propTypes.func.isRequired,
+    queryLogs: propTypes.object.isRequired,
+    dashboard: propTypes.object.isRequired,
+    getFilteringStatus: propTypes.func.isRequired,
+    filtering: propTypes.object.isRequired,
+    setRules: propTypes.func.isRequired,
+    addSuccessToast: propTypes.func.isRequired,
+    setLogsPagination: propTypes.func.isRequired,
+    setLogsPage: propTypes.func.isRequired,
+    toggleDetailedLogs: propTypes.func.isRequired,
+    dnsConfig: propTypes.object.isRequired,
 };
 
 export default Logs;
