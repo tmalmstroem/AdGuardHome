@@ -42,7 +42,7 @@ const Row = ({
     const { t } = useTranslation();
     const dnssec_enabled = useSelector((state) => state.dnsConfig.dnssec_enabled);
     const filters = useSelector((state) => state.filtering.filters, shallowEqual);
-    const whitelistFilters = useSelector((state) => state.filtering.filters, shallowEqual);
+    const whitelistFilters = useSelector((state) => state.filtering.whitelistFilters, shallowEqual);
     const autoClients = useSelector((state) => state.dashboard.autoClients, shallowEqual);
 
     const onClick = () => {
