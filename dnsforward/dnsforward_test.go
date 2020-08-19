@@ -227,7 +227,7 @@ func TestBlockedRequest(t *testing.T) {
 	addr := s.dnsProxy.Addr(proxy.ProtoUDP)
 
 	//
-	// NXDomain blocking
+	// Default blocking - REFUSED
 	//
 	req := dns.Msg{}
 	req.Id = dns.Id()
