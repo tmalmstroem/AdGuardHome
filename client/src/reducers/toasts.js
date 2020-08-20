@@ -9,12 +9,9 @@ import { TOAST_TYPES } from '../helpers/constants';
 
 const toasts = handleActions({
     [addErrorToast]: (state, { payload }) => {
-        const message = payload.error.toString();
-        console.error(message);
-
         const errorToast = {
             id: nanoid(),
-            message,
+            message: payload.error.toString(),
             type: TOAST_TYPES.ERROR,
         };
 

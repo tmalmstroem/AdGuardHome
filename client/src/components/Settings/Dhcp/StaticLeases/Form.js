@@ -1,27 +1,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Field, reduxForm } from 'redux-form';
-import { Trans, useTranslation } from 'react-i18next';
-import { useDispatch } from 'react-redux';
+import { Trans, withTranslation } from 'react-i18next';
+import flow from 'lodash/flow';
 import { renderInputField } from '../../../../helpers/form';
 import { validateIpv4, validateMac, validateRequiredValue } from '../../../../helpers/validators';
 import { FORM_NAME } from '../../../../helpers/constants';
-import { toggleLeaseModal } from '../../../../actions';
 
-const Form = ({
-    handleSubmit,
-    reset,
-    pristine,
-    submitting,
-    processingAdding,
-}) => {
-    const { t } = useTranslation();
-    const dispatch = useDispatch();
-
-    const onClick = () => {
-        reset();
-        dispatch(toggleLeaseModal());
-    };
+const Form = (props) => {
+    const {
+        t,
+        handleSubmit,
+        reset,
+        pristine,
+        submitting,
+        toggleLeaseModal,
+        processingAdding,
+    } = props;
 
     return (
         <form onSubmit={handleSubmit}>
@@ -66,7 +61,10 @@ const Form = ({
                         type="button"
                         className="btn btn-secondary btn-standard"
                         disabled={submitting}
-                        onClick={onClick}
+                        onClick={() => {
+                            reset();
+                            toggleLeaseModal();
+                        }}
                     >
                         <Trans>cancel_btn</Trans>
                     </button>
@@ -88,7 +86,12 @@ Form.propTypes = {
     handleSubmit: PropTypes.func.isRequired,
     reset: PropTypes.func.isRequired,
     submitting: PropTypes.bool.isRequired,
+    toggleLeaseModal: PropTypes.func.isRequired,
     processingAdding: PropTypes.bool.isRequired,
+    t: PropTypes.func.isRequired,
 };
 
-export default reduxForm({ form: FORM_NAME.LEASE })(Form);
+export default flow([
+    withTranslation(),
+    reduxForm({ form: FORM_NAME.LEASE }),
+])(Form);

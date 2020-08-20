@@ -56,7 +56,6 @@ func handleStatus(w http.ResponseWriter, r *http.Request) {
 
 		"protection_enabled": c.ProtectionEnabled,
 	}
-	data["dhcp_available"] = (Context.dhcpServer != nil)
 
 	jsonVal, err := json.Marshal(data)
 	if err != nil {

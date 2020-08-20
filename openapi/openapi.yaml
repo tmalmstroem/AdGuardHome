@@ -2,7 +2,7 @@ openapi: 3.0.3
 info:
     title: AdGuard Home
     description: AdGuard Home REST API. Admin web interface is built on top of this REST API.
-    version: "0.104"
+    version: "0.102"
     contact:
         name: "AdGuard Home"
         url: "https://github.com/AdguardTeam/AdGuardHome"
@@ -348,6 +348,8 @@ paths:
                     application/json:
                         schema:
                             $ref: "#/components/schemas/DhcpConfig"
+                description: DHCP configuration JSON
+                required: true
             responses:
                 "200":
                     description: OK
@@ -963,8 +965,6 @@ components:
                     maximum: 65535
                 protection_enabled:
                     type: boolean
-                dhcp_available:
-                    type: boolean
                 querylog_enabled:
                     type: boolean
                 running:
@@ -998,8 +998,6 @@ components:
                         - tls://1.1.1.1
                         - tls://1.0.0.1
                 protection_enabled:
-                    type: boolean
-                dhcp_available:
                     type: boolean
                 ratelimit:
                     type: integer
@@ -1261,18 +1259,17 @@ components:
                     description: Time period to keep data (1 | 7 | 30 | 90)
         DhcpConfig:
             type: object
+            description: Built-in DHCP server configuration
+            required:
+                - enabled
+                - gateway_ip
+                - subnet_mask
+                - range_start
+                - range_end
+                - lease_duration
             properties:
                 enabled:
                     type: boolean
-                interface_name:
-                    type: string
-                v4:
-                    $ref: "#/components/schemas/DhcpConfigV4"
-                v6:
-                    $ref: "#/components/schemas/DhcpConfigV6"
-        DhcpConfigV4:
-            type: object
-            properties:
                 gateway_ip:
                     type: string
                     example: 192.168.1.1
@@ -1286,14 +1283,8 @@ components:
                     type: string
                     example: 192.168.10.50
                 lease_duration:
-                    type: integer
-        DhcpConfigV6:
-            type: object
-            properties:
-                range_start:
                     type: string
-                lease_duration:
-                    type: integer
+                    example: 12h
         DhcpLease:
             type: object
             description: DHCP lease information
@@ -1314,7 +1305,8 @@ components:
                     example: dell
                 expires:
                     type: string
-                    example: "2017-07-21T17:32:28Z"
+                    format: date-time
+                    example: 2017-07-21T17:32:28Z
         DhcpStaticLease:
             type: object
             description: DHCP static lease information
@@ -1340,14 +1332,8 @@ components:
                 - config
                 - leases
             properties:
-                enabled:
-                    type: boolean
-                interface_name:
-                    type: string
-                v4:
-                    $ref: "#/components/schemas/DhcpConfigV4"
-                v6:
-                    $ref: "#/components/schemas/DhcpConfigV6"
+                config:
+                    $ref: "#/components/schemas/DhcpConfig"
                 leases:
                     type: array
                     items:
@@ -1356,30 +1342,14 @@ components:
                     type: array
                     items:
                         $ref: "#/components/schemas/DhcpStaticLease"
-
         DhcpSearchResult:
             type: object
             description: Information about a DHCP server discovered in the current network
-            properties:
-                v4:
-                    $ref: "#/components/schemas/DhcpSearchV4"
-                v6:
-                    $ref: "#/components/schemas/DhcpSearchV6"
-
-        DhcpSearchV4:
-            type: object
             properties:
                 other_server:
                     $ref: "#/components/schemas/DhcpSearchResultOtherServer"
                 static_ip:
                     $ref: "#/components/schemas/DhcpSearchResultStaticIP"
-
-        DhcpSearchV6:
-            type: object
-            properties:
-                other_server:
-                    $ref: "#/components/schemas/DhcpSearchResultOtherServer"
-
         DhcpSearchResultOtherServer:
             type: object
             properties:
@@ -1391,7 +1361,6 @@ components:
                     type: string
                     description: Set if found=error
                     example: ""
-
         DhcpSearchResultStaticIP:
             type: object
             properties:
@@ -1403,7 +1372,6 @@ components:
                     type: string
                     description: Set if static=no
                     example: ""
-
         DnsAnswer:
             type: object
             description: DNS answer section
@@ -1637,19 +1605,19 @@ components:
                 hardware_address:
                     type: string
                     example: 52:54:00:11:09:ba
+                mtu:
+                    type: integer
+                    format: int32
+                    example: 1500
                 name:
                     type: string
                     example: eth0
-                ipv4_addresses:
+                ip_addresses:
                     type: array
                     items:
                         type: string
-                ipv6_addresses:
-                    type: array
-                    items:
-                        type: string
-                gateway_ip:
-                    type: string
+                    example:
+                        - 127.0.0.1
         AddressInfo:
             type: object
             description: Port information

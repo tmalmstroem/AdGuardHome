@@ -43,5 +43,5 @@
 }
 
 .form__message--error {
-    color: var(--red);
+    color: #cd201f;
 }

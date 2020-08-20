@@ -10,36 +10,51 @@ import AddressList from './AddressList';
 
 import { getInterfaceIp } from '../../helpers/helpers';
 import {
-    ALL_INTERFACES_IP,
-    FORM_NAME,
-    ADDRESS_IN_USE_TEXT,
-    PORT_53_FAQ_LINK,
-    STATUS_RESPONSE,
-    STANDARD_DNS_PORT,
-    STANDARD_WEB_PORT,
+    ALL_INTERFACES_IP, FORM_NAME, ADDRESS_IN_USE_TEXT, PORT_53_FAQ_LINK, UBUNTU_SYSTEM_PORT,
 } from '../../helpers/constants';
 import { renderInputField, toNumber } from '../../helpers/form';
 import { validateRequiredValue, validateInstallPort } from '../../helpers/validators';
 
-const renderInterfaces = (interfaces) => Object.values(interfaces)
-    .map((option) => {
-        const {
-            name,
-            ip_addresses,
-            flags,
-        } = option;
+const STATIC_STATUS = {
+    ENABLED: 'yes',
+    DISABLED: 'no',
+    ERROR: 'error',
+};
 
-        if (option && ip_addresses?.length > 0) {
-            const ip = getInterfaceIp(option);
-            const isDown = flags?.includes('down');
+const renderInterfaces = ((interfaces) => (
+    Object.keys(interfaces)
+        .map((item) => {
+            const option = interfaces[item];
+            const {
+                name,
+                ip_addresses,
+                flags,
+            } = option;
 
-            return <option value={ip} key={name} disabled={isDown}>
-                {name} - {ip} {isDown && `(${<Trans>down</Trans>})`}
-            </option>;
-        }
+            if (option && ip_addresses?.length > 0) {
+                const ip = getInterfaceIp(option);
+                const isDown = flags?.includes('down');
 
-        return null;
-    });
+                if (isDown) {
+                    return (
+                        <option value={ip} key={name} disabled>
+                            <>
+                                {name} - {ip} (<Trans>down</Trans>)
+                            </>
+                        </option>
+                    );
+                }
+
+                return (
+                    <option value={ip} key={name}>
+                        {name} - {ip}
+                    </option>
+                );
+            }
+
+            return false;
+        })
+));
 
 class Settings extends Component {
     componentDidMount() {
@@ -62,36 +77,42 @@ class Settings extends Component {
     getStaticIpMessage = (staticIp) => {
         const { static: status, ip } = staticIp;
 
-        switch (status) {
-            case STATUS_RESPONSE.NO: {
-                return <>
-                    <div className="mb-2">
-                        <Trans values={{ ip }} components={[<strong key="0">text</strong>]}>
-                            install_static_configure
+        if (!status) {
+            return '';
+        }
+
+        return (
+            <>
+                {status === STATIC_STATUS.DISABLED && (
+                    <>
+                        <div className="mb-2">
+                            <Trans values={{ ip }} components={[<strong key="0">text</strong>]}>
+                                install_static_configure
+                            </Trans>
+                        </div>
+                        <button
+                            type="button"
+                            className="btn btn-outline-primary btn-sm"
+                            onClick={() => this.handleStaticIp(ip)}
+                        >
+                            <Trans>set_static_ip</Trans>
+                        </button>
+                    </>
+                )}
+                {status === STATIC_STATUS.ERROR && (
+                    <div className="text-danger">
+                        <Trans>install_static_error</Trans>
+                    </div>
+                )}
+                {status === STATIC_STATUS.ENABLED && (
+                    <div className="text-success">
+                        <Trans>
+                            install_static_ok
                         </Trans>
                     </div>
-                    <button
-                        type="button"
-                        className="btn btn-outline-primary btn-sm"
-                        onClick={() => this.handleStaticIp(ip)}
-                    >
-                        <Trans>set_static_ip</Trans>
-                    </button>
-                </>;
-            }
-            case STATUS_RESPONSE.ERROR: {
-                return <div className="text-danger">
-                    <Trans>install_static_error</Trans>
-                </div>;
-            }
-            case STATUS_RESPONSE.YES: {
-                return <div className="text-success">
-                    <Trans>install_static_ok</Trans>
-                </div>;
-            }
-            default:
-                return null;
-        }
+                )}
+            </>
+        );
     };
 
     handleAutofix = (type) => {
@@ -208,7 +229,7 @@ class Settings extends Component {
                                     component={renderInputField}
                                     type="number"
                                     className="form-control"
-                                    placeholder={STANDARD_WEB_PORT.toString()}
+                                    placeholder="80"
                                     validate={[validateInstallPort, validateRequiredValue]}
                                     normalize={toNumber}
                                     onChange={handleChange}
@@ -276,7 +297,7 @@ class Settings extends Component {
                                     component={renderInputField}
                                     type="number"
                                     className="form-control"
-                                    placeholder={STANDARD_WEB_PORT.toString()}
+                                    placeholder="80"
                                     validate={[validateInstallPort, validateRequiredValue]}
                                     normalize={toNumber}
                                     onChange={handleChange}
@@ -311,7 +332,7 @@ class Settings extends Component {
                                     </p>
                                 </div>}
                             </>}
-                            {dnsPort === STANDARD_DNS_PORT && !isDnsFixAvailable
+                            {dnsPort === UBUNTU_SYSTEM_PORT && !isDnsFixAvailable
                             && dnsStatus.includes(ADDRESS_IN_USE_TEXT)
                             && <Trans
                                 components={[<a href={PORT_53_FAQ_LINK} key="0">link</a>]}>

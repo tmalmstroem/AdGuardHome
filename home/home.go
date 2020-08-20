@@ -219,11 +219,10 @@ func run(args options) {
 	config.DHCP.WorkDir = Context.workDir
 	config.DHCP.HTTPRegister = httpRegister
 	config.DHCP.ConfigModified = onConfigModified
-	if runtime.GOOS != "windows" {
-		Context.dhcpServer = dhcpd.Create(config.DHCP)
-		if Context.dhcpServer == nil {
-			log.Fatalf("Can't initialize DHCP module")
-		}
+	Context.dhcpServer = dhcpd.Create(config.DHCP)
+	if Context.dhcpServer == nil {
+		log.Error("Failed to initialize DHCP server, exiting")
+		os.Exit(1)
 	}
 	Context.autoHosts.Init("")
 
@@ -318,8 +317,9 @@ func run(args options) {
 			}
 		}()
 
-		if Context.dhcpServer != nil {
-			_ = Context.dhcpServer.Start()
+		err = startDHCPServer()
+		if err != nil {
+			log.Fatal(err)
 		}
 	}
 
@@ -505,9 +505,9 @@ func cleanup() {
 	if err != nil {
 		log.Error("Couldn't stop DNS server: %s", err)
 	}
-
-	if Context.dhcpServer != nil {
-		Context.dhcpServer.Stop()
+	err = stopDHCPServer()
+	if err != nil {
+		log.Error("Couldn't stop DHCP server: %s", err)
 	}
 
 	Context.autoHosts.Close()

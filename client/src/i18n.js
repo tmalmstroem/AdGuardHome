@@ -30,11 +30,9 @@ import sl from './__locales/sl.json';
 import tr from './__locales/tr.json';
 import srCS from './__locales/sr-cs.json';
 import hr from './__locales/hr.json';
-import hu from './__locales/hu.json';
 import fa from './__locales/fa.json';
 import th from './__locales/th.json';
 import ro from './__locales/ro.json';
-import siLk from './__locales/si-lk.json';
 import { setHtmlLangAttr } from './helpers/helpers';
 
 const resources = {
@@ -116,9 +114,6 @@ const resources = {
     hr: {
         translation: hr,
     },
-    hu: {
-        translation: hu,
-    },
     fa: {
         translation: fa,
     },
@@ -127,9 +122,6 @@ const resources = {
     },
     ro: {
         translation: ro,
-    },
-    'si-lk': {
-        translation: siLk,
     },
 };
 

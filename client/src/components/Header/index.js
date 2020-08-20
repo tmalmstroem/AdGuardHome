@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { shallowEqual, useSelector } from 'react-redux';
-import { useTranslation } from 'react-i18next';
+import { Trans } from 'react-i18next';
 import classnames from 'classnames';
 import Menu from './Menu';
 import logo from '../ui/svg/logo.svg';
@@ -9,7 +9,6 @@ import './Header.css';
 
 const Header = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const { t } = useTranslation();
 
     const {
         protectionEnabled,
@@ -34,42 +33,45 @@ const Header = () => {
         'badge-danger': !protectionEnabled,
     });
 
-    return <div className="header">
-        <div className="header__container">
-            <div className="header__row">
-                <div
-                    className="header-toggler d-lg-none ml-lg-0 collapsed"
-                    onClick={toggleMenuOpen}
-                >
-                    <span className="header-toggler-icon" />
-                </div>
-                <div className="header__column">
-                    <div className="d-flex align-items-center">
-                        <Link to="/" className="nav-link pl-0 pr-1">
-                            <img src={logo} alt="" className="header-brand-img" />
-                        </Link>
-                        {!processing && isCoreRunning
-                        && <span className={badgeClass}
-                        >{t(protectionEnabled ? 'on' : 'off')}
-                        </span>}
+    return (
+        <div className="header">
+            <div className="header__container">
+                <div className="header__row">
+                    <div
+                        className="header-toggler d-lg-none ml-lg-0 collapsed"
+                        onClick={toggleMenuOpen}
+                    >
+                        <span className="header-toggler-icon" />
                     </div>
-                </div>
-                <Menu
-                    pathname={pathname}
-                    isMenuOpen={isMenuOpen}
-                    closeMenu={closeMenu}
-                />
-                <div className="header__column">
-                    <div className="header__right">
-                        {!processingProfile && name
-                        && <a href="control/logout" className="btn btn-sm btn-outline-secondary">
-                            {t('sign_out')}
-                        </a>}
+                    <div className="header__column">
+                        <div className="d-flex align-items-center">
+                            <Link to="/" className="nav-link pl-0 pr-1">
+                                <img src={logo} alt="" className="header-brand-img" />
+                            </Link>
+                            {!processing && isCoreRunning && (
+                                <span className={badgeClass}>
+                                        <Trans>{protectionEnabled ? 'on' : 'off'}</Trans>
+                                    </span>
+                            )}
+                        </div>
+                    </div>
+                    <Menu
+                        pathname={pathname}
+                        isMenuOpen={isMenuOpen}
+                        closeMenu={closeMenu}
+                    />
+                    <div className="header__column">
+                        <div className="header__right">
+                            {!processingProfile && name
+                            && <a href="control/logout" className="btn btn-sm btn-outline-secondary">
+                                <Trans>sign_out</Trans>
+                            </a>}
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>;
+    );
 };
 
 export default Header;

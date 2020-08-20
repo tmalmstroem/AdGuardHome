@@ -12,7 +12,6 @@ Contents:
 * Updating
 	* Get version command
 	* Update command
-* API: Get global status
 * TLS
 	* API: Get TLS configuration
 	* API: Set TLS configuration
@@ -23,9 +22,7 @@ Contents:
 	* Update client
 	* Delete client
 	* API: Find clients by IP
-* DHCP server
-	* DHCP server in DNS
-	* "Show DHCP interfaces" command
+* Enable DHCP server
 	* "Show DHCP status" command
 	* "Check DHCP" command
 	* "Enable DHCP" command
@@ -378,31 +375,9 @@ Error response:
 UI shows error message "Auto-update has failed"
 
 
-## API: Get global status
+## Enable DHCP server
 
-Request:
-
-	GET /control/status
-
-Response:
-
-	200 OK
-
-	{
-	"dns_addresses":["..."],
-	"dns_port":53,
-	"http_port":3000,
-	"language":"en",
-	"protection_enabled":true,
-	"running":true,
-	"dhcp_available":true,
-	"version":"undefined"
-	}
-
-
-## DHCP server
-
-Enable DHCP server algorithm:
+Algorithm:
 
 * UI shows DHCP configuration screen with "Enabled DHCP" button disabled, and "Check DHCP" button enabled
 * User clicks on "Check DHCP"; UI sends request to server
@@ -412,44 +387,6 @@ Enable DHCP server algorithm:
 * User clicks on "Enable DHCP"; UI sends request to server
 * Server sets a static IP (if necessary), enables DHCP server, sends the status back to UI
 * UI shows the status
-
-
-### DHCP server in DNS
-
-DHCP leases are used in several ways by DNS module.
-
-* For "A" DNS reqeust we reply with an IP address leased by our DHCP server.
-
-		< A bills-notebook.lan.
-		> A bills-notebook.lan. = 192.168.1.100
-
-* For "PTR" DNS request we reply with a hostname from an active DHCP lease.
-
-		< PTR 100.1.168.192.in-addr.arpa.
-		> PTR 100.1.168.192.in-addr.arpa. = bills-notebook.
-
-
-### "Show DHCP interfaces" command
-
-Request:
-
-	GET /control/dhcp/interfaces
-
-Response:
-
-	200 OK
-
-	{
-		"iface_name":{
-			"name":"iface_name",
-			"hardware_address":"...",
-			"ipv4_addresses":["ipv4 addr", ...],
-			"ipv6_addresses":["ipv6 addr", ...],
-			"gateway_ip":"...",
-			"flags":"up|broadcast|multicast"
-		}
-		...
-	}
 
 
 ### "Show DHCP status" command
@@ -463,19 +400,16 @@ Response:
 	200 OK
 
 	{
-		"enabled":false,
-		"interface_name":"...",
-		"v4":{
+		"config":{
+			"enabled":false,
+			"interface_name":"...",
 			"gateway_ip":"...",
 			"subnet_mask":"...",
-			"range_start":"...", // if empty: DHCPv4 won't be enabled
+			"range_start":"...",
 			"range_end":"...",
 			"lease_duration":60,
+			"icmp_timeout_msec":0
 		},
-		"v6":{
-			"range_start":"...", // if empty: DHCPv6 won't be enabled
-			"lease_duration":60,
-		}
 		"leases":[
 			{"ip":"...","mac":"...","hostname":"...","expires":"..."}
 			...
@@ -500,21 +434,13 @@ Response:
 	200 OK
 
 	{
-		v4: {
-			"other_server": {
-				"found": "yes|no|error",
-				"error": "Error message", // set if found=error
-			},
-			"static_ip": {
-				"static": "yes|no|error",
-				"ip": "<Current dynamic IP address>", // set if static=no
-			}
-		}
-		v6: {
-			"other_server": {
-				"found": "yes|no|error",
-				"error": "Error message", // set if found=error
-			},
+		"other_server": {
+			"found": "yes|no|error",
+			"error": "Error message", // set if found=error
+		},
+		"static_ip": {
+			"static": "yes|no|error",
+			"ip": "<Current dynamic IP address>", // set if static=no
 		}
 	}
 
@@ -542,19 +468,14 @@ Request:
 	POST /control/dhcp/set_config
 
 	{
-	"enabled":true,
-	"interface_name":"vboxnet0",
-	"v4":{
+		"enabled":true,
+		"interface_name":"vboxnet0",
 		"gateway_ip":"192.169.56.1",
 		"subnet_mask":"255.255.255.0",
-		"range_start":"192.169.56.100",
-		"range_end":"192.169.56.200", // Note: first 3 octects must match "range_start"
+		"range_start":"192.169.56.3",
+		"range_end":"192.169.56.3",
 		"lease_duration":60,
-	},
-	"v6":{
-		"range_start":"...",
-		"lease_duration":60,
-	}
+		"icmp_timeout_msec":0
 	}
 
 Response:
@@ -562,10 +483,6 @@ Response:
 	200 OK
 
 	OK
-
-For v4, if range_start = "1.2.3.4", the range_end must be "1.2.3.X" where X > 4.
-
-For v6, if range_start = "2001::1", the last IP is "2001:ff".
 
 
 ### Static IP check/set

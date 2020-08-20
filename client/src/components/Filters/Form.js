@@ -5,7 +5,7 @@ import { withTranslation } from 'react-i18next';
 import flow from 'lodash/flow';
 import classNames from 'classnames';
 import { validatePath, validateRequiredValue } from '../../helpers/validators';
-import { renderCheckboxField, renderInputField } from '../../helpers/form';
+import { renderInputField, renderSelectField } from '../../helpers/form';
 import { MODAL_OPEN_TIMEOUT, MODAL_TYPE, FORM_NAME } from '../../helpers/constants';
 
 const getIconsData = (homepage, source) => ([
@@ -60,7 +60,7 @@ const renderFilters = ({ categories, filters }, selectedSources, t) => Object.ke
                     <Field
                         name={`${filter.id}`}
                         type="checkbox"
-                        component={renderCheckboxField}
+                        component={renderSelectField}
                         placeholder={t(name)}
                         disabled={isSelected}
                         checked={isSelected}
@@ -148,13 +148,13 @@ const Form = (props) => {
             >
                 {t('cancel_btn')}
             </button>
-            {modalType !== MODAL_TYPE.SELECT_MODAL_TYPE && <button
+            <button
                 type="submit"
                 className="btn btn-success"
                 disabled={processingAddFilter || processingConfigFilter}
             >
                 {t('save_btn')}
-            </button>}
+            </button>
         </div>
     </form>;
 };

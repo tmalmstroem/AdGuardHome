@@ -86,7 +86,6 @@ type clientsContainer struct {
 }
 
 // Init initializes clients container
-// dhcpServer: optional
 // Note: this function must be called only once
 func (clients *clientsContainer) Init(objects []clientObject, dhcpServer *dhcpd.Server, autoHosts *util.AutoHosts) {
 	if clients.list != nil {
@@ -107,9 +106,7 @@ func (clients *clientsContainer) Init(objects []clientObject, dhcpServer *dhcpd.
 
 	if !clients.testing {
 		clients.addFromDHCP()
-		if clients.dhcpServer != nil {
-			clients.dhcpServer.SetOnLeaseChanged(clients.onDHCPLeaseChanged)
-		}
+		clients.dhcpServer.SetOnLeaseChanged(clients.onDHCPLeaseChanged)
 		clients.autoHosts.SetOnChanged(clients.onHostsChanged)
 	}
 }
