@@ -265,12 +265,10 @@
     border: 0;
     border-radius: 8px;
     min-height: 43rem;
-    max-height: 95vh;
     max-width: 100%;
     align-items: stretch;
     width: 100%;
     border-collapse: collapse;
-    overflow: scroll;
 }
 
 .logs__table .logs__cell--response,

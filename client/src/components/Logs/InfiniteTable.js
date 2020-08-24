@@ -9,7 +9,7 @@ import propTypes from 'prop-types';
 import Loading from '../ui/Loading';
 import Header from './Cells/Header';
 import { getLogs } from '../../actions/queryLogs';
-import { QUERY_LOGS_PAGE_LIMIT } from '../../helpers/constants';
+import { QUERY_LOGS_PAGE_LIMIT, QUERY_LOGS_PAGE_SIZE } from '../../helpers/constants';
 
 const InfiniteTable = ({
     isLoading,
@@ -19,24 +19,48 @@ const InfiniteTable = ({
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const firstElementRef = useRef(null);
+    const [IDX, setIdx] = useState(QUERY_LOGS_PAGE_SIZE);
+    const [pageYOffset, setPageYOffset] = useState(window.pageYOffset);
 
     const intersectionObserverCallback = useCallback((entries) => {
         const [entry] = entries;
         if (entry.isIntersecting) {
-            (async () => {
-                await dispatch(getLogs());
-                if (firstElementRef) {
-                    firstElementRef.current.scrollIntoView();
+            setIdx((idx) => {
+                const test = idx + QUERY_LOGS_PAGE_SIZE;
+                // todo fix
+                if (test / QUERY_LOGS_PAGE_LIMIT === 1) {
+                    (async () => {
+                        await dispatch(getLogs());
+                    })();
                 }
-            })();
+
+                return test;
+            });
+            setPageYOffset((pageYOffset) => {
+                window.scrollTo(0, pageYOffset);
+                return pageYOffset;
+            });
         }
-    }, [firstElementRef.current]);
+    }, [pageYOffset, firstElementRef.current]);
 
     const observer = useRef(
         new IntersectionObserver(intersectionObserverCallback, { threshold: 0 }),
     );
 
     const [element, setElement] = useState(null);
+
+    useEffect(() => {
+        const listener = () => {
+            // todo add debounce
+            setPageYOffset(window.pageYOffset);
+        };
+        const eventType = 'scroll';
+
+        window.addEventListener(eventType, listener);
+        return () => {
+            window.removeEventListener(eventType, listener);
+        };
+    }, []);
 
     useEffect(() => {
         const currentElement = element;
@@ -79,9 +103,9 @@ const InfiniteTable = ({
         <Header />
         {items.length === 0 && !processingGetLogs
             ? <label className="logs__no-data">{t('nothing_found')}</label>
-            : <>{items.map(
-                (row, idx, arr) => {
-                    const NEW_FIRST_ELEMENT_IDX = arr.length - QUERY_LOGS_PAGE_LIMIT;
+            : <>{items.slice(0, IDX).map(
+                (row, idx) => {
+                    const NEW_FIRST_ELEMENT_IDX = IDX - QUERY_LOGS_PAGE_SIZE;
                     return <Row
                                     key={idx}
                                     rowProps={row}
