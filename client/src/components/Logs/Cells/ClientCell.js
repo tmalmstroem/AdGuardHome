@@ -54,24 +54,21 @@ const ClientCell = ({
     const renderBlockingButton = (isFiltered, domain) => {
         const buttonType = isFiltered ? BLOCK_ACTIONS.UNBLOCK : BLOCK_ACTIONS.BLOCK;
 
-        const buttonClass = classNames('logs__cell--block-button button__action', {
+        const buttonClass = classNames('btn btn-sm logs__cell--block-button', {
             'btn-outline-secondary': isFiltered,
             'btn-outline-danger': !isFiltered,
-            'logs__action--detailed': isDetailed,
         });
 
         const onClick = () => dispatch(toggleBlocking(buttonType, domain));
 
-        return <div className={buttonClass}>
-            <button
-                    type="button"
-                    className={classNames('btn btn-sm', buttonClass)}
-                    onClick={onClick}
-                    disabled={processingRules}
-            >
-                {t(buttonType)}
-            </button>
-        </div>;
+        return <button
+                type="button"
+                className={buttonClass}
+                onClick={onClick}
+                disabled={processingRules}
+        >
+            {t(buttonType)}
+        </button>;
     };
 
     return <div className="o-hidden h-100 logs__cell logs__cell--client" role="gridcell">

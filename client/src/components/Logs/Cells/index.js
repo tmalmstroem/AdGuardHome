@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
@@ -29,7 +29,7 @@ import ResponseCell from './ResponseCell';
 import ClientCell from './ClientCell';
 import '../Logs.css';
 
-const Row = ({
+const Row = forwardRef(({
     style,
     rowProps,
     rowProps: { reason },
@@ -37,7 +37,7 @@ const Row = ({
     setDetailedDataCurrent,
     setButtonType,
     setModalOpened,
-}) => {
+}, ref) => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const dnssec_enabled = useSelector((state) => state.dnsConfig.dnssec_enabled);
@@ -145,21 +145,21 @@ const Row = ({
 
     const isDetailed = useSelector((state) => state.queryLogs.isDetailed);
 
-    const className = classNames('d-flex px-5 logs__row logs__row--separation',
+    const className = classNames('d-flex px-5 logs__row',
         `logs__row--${FILTERED_STATUS_TO_META_MAP?.[reason]?.COLOR ?? QUERY_STATUS_COLORS.WHITE}`, {
             'logs__cell--detailed': isDetailed,
         });
 
-    return <div style={style} className={className} onClick={onClick} role="row">
+    return <div style={style} className={className} onClick={onClick} role="row" ref={ref}>
         <DateCell {...rowProps} />
         <DomainCell {...rowProps} />
         <ResponseCell {...rowProps} />
         <ClientCell {...rowProps} />
     </div>;
-};
+});
 
 Row.propTypes = {
-    style: propTypes.object.isRequired,
+    style: propTypes.object,
     rowProps: propTypes.shape({
         reason: propTypes.string.isRequired,
         answer_dnssec: propTypes.bool.isRequired,

@@ -66,7 +66,7 @@ const renderBlockingButton = (ip) => {
 
     const onClick = () => toggleClientStatus(type, ip);
 
-    return <div className="table__action button__action">
+    return <div className="table__action pl-4">
                 <button
                         type="button"
                         className={className}
@@ -82,10 +82,10 @@ const ClientCell = (row) => {
     const { value, original: { info } } = row;
 
     return <>
-        <div className="logs__row logs__row--overflow logs__row--column">
+        <div className="logs__row logs__row--overflow logs__row--column d-flex">
             {renderFormattedClientCell(value, info, true)}
+            {renderBlockingButton(value)}
         </div>
-        {renderBlockingButton(value)}
     </>;
 };
 

@@ -4,7 +4,7 @@ import apiClient from '../api/Api';
 import { normalizeLogs, getParamsForClientsSearch, addClientInfo } from '../helpers/helpers';
 import {
     DEFAULT_LOGS_FILTER,
-    TABLE_DEFAULT_PAGE_SIZE,
+    QUERY_LOGS_PAGE_LIMIT,
 } from '../helpers/constants';
 import { addErrorToast, addSuccessToast } from './toasts';
 
@@ -40,8 +40,8 @@ const checkFilteredLogs = async (data, filter, dispatch, total) => {
     const { logs, oldest } = data;
     const totalData = total || { logs };
 
-    const needToGetAdditionalLogs = (logs.length < TABLE_DEFAULT_PAGE_SIZE
-        || totalData.logs.length < TABLE_DEFAULT_PAGE_SIZE)
+    const needToGetAdditionalLogs = (logs.length < QUERY_LOGS_PAGE_LIMIT
+        || totalData.logs.length < QUERY_LOGS_PAGE_LIMIT)
         && oldest !== '';
 
     if (needToGetAdditionalLogs) {
@@ -79,9 +79,10 @@ export const getLogsSuccess = createAction('GET_LOGS_SUCCESS');
 export const getLogs = (config) => async (dispatch, getState) => {
     dispatch(getLogsRequest());
     try {
-        const { isFiltered, filter } = getState().queryLogs;
+        const { isFiltered, filter, oldest } = getState().queryLogs;
         const data = await getLogsWithParams({
             ...config,
+            older_than: oldest,
             filter,
         });
 

@@ -1,18 +1,15 @@
-import React from 'react';
-import { FixedSizeList } from 'react-window';
-import InfiniteLoader from 'react-window-infinite-loader';
+import React, {
+    forwardRef,
+    useCallback,
+    useEffect, useRef, useState,
+} from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import propTypes from 'prop-types';
-import AutoSizer from 'react-virtualized-auto-sizer';
 import Loading from '../ui/Loading';
 import Header from './Cells/Header';
 import { getLogs } from '../../actions/queryLogs';
-
-const CELL_HEIGHT = 50;
-const DETAILED_CELL_HEIGHT = 80;
-const OVERSCAN_COUNT = 25;
-const HEADER_HEIGHT = CELL_HEIGHT;
+import { QUERY_LOGS_PAGE_LIMIT } from '../../helpers/constants';
 
 const InfiniteTable = ({
     isLoading,
@@ -21,52 +18,80 @@ const InfiniteTable = ({
 }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
+    const firstElementRef = useRef(null);
+
+    const intersectionObserverCallback = useCallback((entries) => {
+        const [entry] = entries;
+        if (entry.isIntersecting) {
+            (async () => {
+                await dispatch(getLogs());
+                if (firstElementRef) {
+                    firstElementRef.current.scrollIntoView();
+                }
+            })();
+        }
+    }, [firstElementRef.current]);
+
+    const observer = useRef(
+        new IntersectionObserver(intersectionObserverCallback, { threshold: 0 }),
+    );
+
+    const [element, setElement] = useState(null);
+
+    useEffect(() => {
+        const currentElement = element;
+        const currentObserver = observer.current;
+
+        if (currentElement) {
+            currentObserver.observe(currentElement);
+        }
+
+        return () => {
+            if (currentElement) {
+                currentObserver.unobserve(currentElement);
+            }
+        };
+    }, [element]);
 
     const {
-        isDetailed,
         isEntireLog,
         processingGetLogs,
-        oldest,
     } = useSelector((state) => state.queryLogs, shallowEqual);
 
-    const loadMoreItems = () => dispatch(getLogs({ older_than: oldest }));
-
-    const getIsItemLoaded = (index) => isEntireLog || index < items.length - 1;
-
-    const Row = ({
-        index,
+    const Row = forwardRef(({
+        rowProps,
         style,
-    }) => renderRow({
-        rowProps: items?.[index],
+    }, ref) => renderRow({
+        rowProps,
         style,
-    });
+        ref,
+    }));
 
-    const itemCount = items.length;
+    Row.displayName = 'Row';
+
+    Row.propTypes = {
+        rowProps: propTypes.object.isRequired,
+        style: propTypes.object,
+    };
 
     return <div className='logs__table' role='grid'>
         {(isLoading || processingGetLogs) && <Loading />}
         <Header />
-        {itemCount === 0 && !processingGetLogs
+        {items.length === 0 && !processingGetLogs
             ? <label className="logs__no-data">{t('nothing_found')}</label>
-            : <AutoSizer>
-                    {({ height, width }) => <InfiniteLoader
-                            isItemLoaded={getIsItemLoaded}
-                            itemCount={itemCount}
-                            loadMoreItems={loadMoreItems}
-                    >
-                        {({ onItemsRendered, ref }) => <FixedSizeList
-                                width={width}
-                                height={height - HEADER_HEIGHT}
-                                itemCount={itemCount}
-                                itemSize={isDetailed ? DETAILED_CELL_HEIGHT : CELL_HEIGHT}
-                                onItemsRendered={onItemsRendered}
-                                ref={ref}
-                                overscanCount={OVERSCAN_COUNT}
-                        >
-                            {Row}
-                        </FixedSizeList>}
-                    </InfiniteLoader>}
-                </AutoSizer>}
+            : <>{items.map(
+                (row, idx, arr) => {
+                    const NEW_FIRST_ELEMENT_IDX = arr.length - QUERY_LOGS_PAGE_LIMIT;
+                    return <Row
+                                    key={idx}
+                                    rowProps={row}
+                                    ref={idx === NEW_FIRST_ELEMENT_IDX ? firstElementRef : null}
+                            />;
+                },
+            )}
+                    {items.length > 0 && !isEntireLog
+                    && <div className="text-center" ref={setElement}>{t('loading_table_status')}</div>}
+            </>}
     </div>;
 };
 

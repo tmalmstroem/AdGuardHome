@@ -49,16 +49,16 @@ const processContent = (data, buttonType) => Object.entries(data)
         }
 
         return isHidden ? null : <Fragment key={key}>
-            <div
+        <div
                 className={classNames(`key__${key}`, keyClass, {
                     'font-weight-bold': isBoolean && value === true,
                 })}>
-                <Trans>{isButton ? value : key}</Trans>
-            </div>
-            <div className={`value__${key} text-pre text-truncate`}>
-                <Trans>{(isTitle || isButton || isBoolean) ? '' : value || '—'}</Trans>
-            </div>
-        </Fragment>;
+            <Trans>{isButton ? value : key}</Trans>
+        </div>
+        <div className={`value__${key} text-pre text-truncate`}>
+            <Trans>{(isTitle || isButton || isBoolean) ? '' : value || '—'}</Trans>
+        </div>
+    </Fragment>;
     });
 
 const Logs = () => {
@@ -161,21 +161,24 @@ const Logs = () => {
         setIsLoading(false);
     };
 
-    const renderRow = ({
+    const renderRow = (({
         rowProps,
         style,
+        ref,
     }) => <Row
+            ref={ref}
             style={style}
             rowProps={rowProps}
             isSmallScreen={isSmallScreen}
             setDetailedDataCurrent={setDetailedDataCurrent}
             setButtonType={setButtonType}
             setModalOpened={setModalOpened}
-    />;
+    />);
 
     renderRow.propTypes = {
         rowProps: propTypes.object.isRequired,
-        style: propTypes.object.isRequired,
+        style: propTypes.object,
+        ref: propTypes.object,
     };
 
     const renderPage = () => <>
