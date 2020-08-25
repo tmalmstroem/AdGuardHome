@@ -21,35 +21,39 @@ const InfiniteTable = ({
     const firstElementRef = useRef(null);
     const [renderLimitIdx, setRenderLimitIdx] = useState(QUERY_LOGS_PAGE_SIZE);
     const [pageYOffset, setPageYOffset] = useState(window.pageYOffset);
+    const loader = useRef(null);
 
-    const intersectionObserverCallback = useCallback((entries) => {
-        const [entry] = entries;
-        if (entry.isIntersecting) {
-            setRenderLimitIdx((idx) => {
-                const newIdx = idx + QUERY_LOGS_PAGE_SIZE;
-                const isDivisible = idx % QUERY_LOGS_PAGE_LIMIT === 0;
+    const {
+        isEntireLog,
+        processingGetLogs,
+    } = useSelector((state) => state.queryLogs, shallowEqual);
 
-                if (isDivisible) {
-                    (async () => {
-                        await dispatch(getLogs());
-                    })();
-                }
-
-                return newIdx;
-            });
-            // todo handle async load
-            setPageYOffset((pageYOffset) => {
-                window.scrollTo(0, pageYOffset);
-                return pageYOffset;
-            });
+    const loadMore = useCallback((entries) => {
+        const [target] = entries;
+        if (target.isIntersecting && !processingGetLogs) {
+            setRenderLimitIdx((idx) => idx + QUERY_LOGS_PAGE_SIZE);
+            const isDivisible = renderLimitIdx % QUERY_LOGS_PAGE_LIMIT === 0;
+            if (isDivisible) {
+                dispatch(getLogs());
+            }
+            window.scrollTo(0, pageYOffset);
         }
-    }, [pageYOffset, firstElementRef.current]);
+    }, [processingGetLogs, pageYOffset, renderLimitIdx, getLogs]);
 
-    const observer = useRef(
-        new IntersectionObserver(intersectionObserverCallback, { threshold: 0 }),
-    );
 
-    const [element, setElement] = useState(null);
+    useEffect(() => {
+        const observer = new IntersectionObserver(loadMore, { threshold: 0 });
+
+        if (loader.current) {
+            observer.observe(loader.current);
+        }
+
+        return () => {
+            if (loader.current) {
+                observer.unobserve(loader.current);
+            }
+        };
+    }, [loader, loadMore]);
 
     useEffect(() => {
         const listener = () => {
@@ -62,26 +66,6 @@ const InfiniteTable = ({
             window.removeEventListener(eventType, listener);
         };
     }, []);
-
-    useEffect(() => {
-        const currentElement = element;
-        const currentObserver = observer.current;
-
-        if (currentElement) {
-            currentObserver.observe(currentElement);
-        }
-
-        return () => {
-            if (currentElement) {
-                currentObserver.unobserve(currentElement);
-            }
-        };
-    }, [element]);
-
-    const {
-        isEntireLog,
-        processingGetLogs,
-    } = useSelector((state) => state.queryLogs, shallowEqual);
 
     const Row = forwardRef(({
         rowProps,
@@ -108,14 +92,14 @@ const InfiniteTable = ({
                 (row, idx) => {
                     const newStartElementIdx = renderLimitIdx - QUERY_LOGS_PAGE_SIZE;
                     return <Row
-                            key={`${row.time} ${row.domain}`}
-                            rowProps={row}
-                            ref={idx === newStartElementIdx ? firstElementRef : null}
-                    />;
+                                    key={`${row.time} ${row.domain}`}
+                                    rowProps={row}
+                                    ref={idx === newStartElementIdx ? firstElementRef : null}
+                            />;
                 },
             )}
                     {items.length > 0 && !isEntireLog
-                    && <div className="text-center" ref={setElement}>{t('loading_table_status')}</div>}
+                    && <div className="text-center" ref={loader}>{t('loading_table_status')}</div>}
             </>}
     </div>;
 };
