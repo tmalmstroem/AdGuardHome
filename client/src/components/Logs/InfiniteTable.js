@@ -19,23 +19,25 @@ const InfiniteTable = ({
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const firstElementRef = useRef(null);
-    const [IDX, setIdx] = useState(QUERY_LOGS_PAGE_SIZE);
+    const [renderLimitIdx, setRenderLimitIdx] = useState(QUERY_LOGS_PAGE_SIZE);
     const [pageYOffset, setPageYOffset] = useState(window.pageYOffset);
 
     const intersectionObserverCallback = useCallback((entries) => {
         const [entry] = entries;
         if (entry.isIntersecting) {
-            setIdx((idx) => {
-                const test = idx + QUERY_LOGS_PAGE_SIZE;
-                // todo fix
-                if (test / QUERY_LOGS_PAGE_LIMIT === 1) {
+            setRenderLimitIdx((idx) => {
+                const newIdx = idx + QUERY_LOGS_PAGE_SIZE;
+                const isDivisible = idx % QUERY_LOGS_PAGE_LIMIT === 0;
+
+                if (isDivisible) {
                     (async () => {
                         await dispatch(getLogs());
                     })();
                 }
 
-                return test;
+                return newIdx;
             });
+            // todo handle async load
             setPageYOffset((pageYOffset) => {
                 window.scrollTo(0, pageYOffset);
                 return pageYOffset;
@@ -51,7 +53,6 @@ const InfiniteTable = ({
 
     useEffect(() => {
         const listener = () => {
-            // todo add debounce
             setPageYOffset(window.pageYOffset);
         };
         const eventType = 'scroll';
@@ -103,14 +104,14 @@ const InfiniteTable = ({
         <Header />
         {items.length === 0 && !processingGetLogs
             ? <label className="logs__no-data">{t('nothing_found')}</label>
-            : <>{items.slice(0, IDX).map(
+            : <>{items.slice(0, renderLimitIdx).map(
                 (row, idx) => {
-                    const NEW_FIRST_ELEMENT_IDX = IDX - QUERY_LOGS_PAGE_SIZE;
+                    const newStartElementIdx = renderLimitIdx - QUERY_LOGS_PAGE_SIZE;
                     return <Row
-                                    key={idx}
-                                    rowProps={row}
-                                    ref={idx === NEW_FIRST_ELEMENT_IDX ? firstElementRef : null}
-                            />;
+                            key={`${row.time} ${row.domain}`}
+                            rowProps={row}
+                            ref={idx === newStartElementIdx ? firstElementRef : null}
+                    />;
                 },
             )}
                     {items.length > 0 && !isEntireLog
