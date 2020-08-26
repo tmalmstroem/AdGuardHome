@@ -10,7 +10,7 @@ import {
 } from '../../../helpers/constants';
 import { captitalizeWords, formatDateTime, formatTime } from '../../../helpers/helpers';
 import { getSourceData } from '../../../helpers/trackers/trackers';
-import getIconTooltip from './getIconTooltip';
+import IconTooltip from './IconTooltip';
 
 const DomainCell = ({
     answer_dnssec,
@@ -77,15 +77,6 @@ const DomainCell = ({
 
     const renderContent = hasTracker ? requestDetails.concat(getGrid(knownTrackerDataObj, 'known_tracker', 'pt-4')) : requestDetails;
 
-    const trackerHint = getIconTooltip({
-        className: privacyIconClass,
-        tooltipClass: 'pt-4 pb-5 px-5 mw-75',
-        xlinkHref: 'privacy',
-        contentItemClass: 'key-colon',
-        renderContent,
-        place: 'bottom',
-    });
-
     const valueClass = classNames('w-100 text-truncate', {
         'px-2 d-flex justify-content-center flex-column': isDetailed,
     });
@@ -94,16 +85,18 @@ const DomainCell = ({
         .join(', ');
 
     return <div className="d-flex o-hidden logs__cell logs__cell logs__cell--domain" role="gridcell">
-        {dnssec_enabled && getIconTooltip({
-            className: lockIconClass,
-            tooltipClass: 'py-4 px-5 pb-45',
-            canShowTooltip: answer_dnssec,
-            xlinkHref: 'lock',
-            columnClass: 'w-100',
-            content: 'validated_with_dnssec',
-            placement: 'bottom',
-        })}
-        {trackerHint}
+        {dnssec_enabled && <IconTooltip
+                className={lockIconClass}
+                tooltipClass='py-4 px-5 pb-45'
+                canShowTooltip={!!answer_dnssec}
+                xlinkHref='lock'
+                columnClass='w-100'
+                content='validated_with_dnssec'
+                placement='bottom'
+        />}
+        <IconTooltip className={privacyIconClass} tooltipClass='pt-4 pb-5 px-5 mw-75'
+                     xlinkHref='privacy' contentItemClass='key-colon' renderContent={renderContent}
+                     place='bottom' />
         <div className={valueClass}>
             <div className="text-truncate" title={domain}>{domain}</div>
             {details && isDetailed

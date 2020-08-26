@@ -210,6 +210,14 @@
     visibility: hidden;
 }
 
+.logs__row {
+    position: relative;
+    display: flex;
+    min-height: 26px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .logs__table .logs__row {
     border-bottom: 2px solid var(--gray);
 }
@@ -269,6 +277,10 @@
     align-items: stretch;
     width: 100%;
     border-collapse: collapse;
+    contain: layout;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    will-change: scroll-position;
 }
 
 .logs__table .logs__cell--response,

@@ -5,7 +5,7 @@ import React from 'react';
 import propTypes from 'prop-types';
 import { formatElapsedMs, getFilterName } from '../../../helpers/helpers';
 import { FILTERED_STATUS, FILTERED_STATUS_TO_META_MAP } from '../../../helpers/constants';
-import getIconTooltip from './getIconTooltip';
+import IconTooltip from './IconTooltip';
 
 const ResponseCell = ({
     elapsedMs,
@@ -68,16 +68,16 @@ const ResponseCell = ({
 
 
     return <div className="logs__cell logs__cell--response" role="gridcell">
-        {getIconTooltip({
-            className: classNames('icons mr-4 icon--24 icon--lightgray', { 'my-3': isDetailed }),
-            columnClass: 'grid grid--limited',
-            tooltipClass: 'px-5 pb-5 pt-4 mw-75 custom-tooltip__response-details',
-            contentItemClass: 'text-truncate key-colon o-hidden',
-            xlinkHref: 'question',
-            title: 'response_details',
-            content,
-            placement: 'bottom',
-        })}
+        <IconTooltip
+                className={classNames('icons mr-4 icon--24 icon--lightgray', { 'my-3': isDetailed })}
+                columnClass='grid grid--limited'
+                tooltipClass='px-5 pb-5 pt-4 mw-75 custom-tooltip__response-details'
+                contentItemClass='text-truncate key-colon o-hidden'
+                xlinkHref='question'
+                title='response_details'
+                content={content}
+                placement='bottom'
+        />
         <div className="text-truncate">
             <div className="text-truncate" title={statusLabel}>{statusLabel}</div>
             {isDetailed && <div

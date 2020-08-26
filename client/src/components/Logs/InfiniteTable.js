@@ -1,11 +1,14 @@
 import React, {
-    forwardRef,
     useCallback,
-    useEffect, useRef, useState,
+    useEffect,
+    useRef,
+    useState,
+    forwardRef,
 } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import propTypes from 'prop-types';
+import throttle from 'lodash/throttle';
 import Loading from '../ui/Loading';
 import Header from './Cells/Header';
 import { getLogs } from '../../actions/queryLogs';
@@ -56,14 +59,16 @@ const InfiniteTable = ({
     }, [loader, loadMore]);
 
     useEffect(() => {
-        const listener = () => {
-            setPageYOffset(window.pageYOffset);
-        };
-        const eventType = 'scroll';
+        const THROTTLE_TIME = 50;
+        const EVENT_TYPE = 'scroll';
 
-        window.addEventListener(eventType, listener);
+        const listener = throttle(() => {
+            setPageYOffset(window.pageYOffset);
+        }, THROTTLE_TIME);
+
+        window.addEventListener(EVENT_TYPE, listener);
         return () => {
-            window.removeEventListener(eventType, listener);
+            window.removeEventListener(EVENT_TYPE, listener);
         };
     }, []);
 
@@ -83,21 +88,22 @@ const InfiniteTable = ({
         style: propTypes.object,
     };
 
+    const getRow = (row, idx) => {
+        const newStartElementIdx = renderLimitIdx - QUERY_LOGS_PAGE_SIZE;
+
+        return <Row
+                key={`${row.time} ${row.domain}`}
+                rowProps={row}
+                ref={idx === newStartElementIdx ? firstElementRef : null}
+        />;
+    };
+
     return <div className='logs__table' role='grid'>
         {(isLoading || processingGetLogs) && <Loading />}
         <Header />
         {items.length === 0 && !processingGetLogs
             ? <label className="logs__no-data">{t('nothing_found')}</label>
-            : <>{items.slice(0, renderLimitIdx).map(
-                (row, idx) => {
-                    const newStartElementIdx = renderLimitIdx - QUERY_LOGS_PAGE_SIZE;
-                    return <Row
-                                    key={`${row.time} ${row.domain}`}
-                                    rowProps={row}
-                                    ref={idx === newStartElementIdx ? firstElementRef : null}
-                            />;
-                },
-            )}
+            : <>{items.slice(0, renderLimitIdx).map(getRow)}
                     {items.length > 0 && !isEntireLog
                     && <div className="text-center" ref={loader}>{t('loading_table_status')}</div>}
             </>}

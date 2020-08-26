@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Trans } from 'react-i18next';
 import Modal from 'react-modal';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
@@ -48,17 +48,17 @@ const processContent = (data, buttonType) => Object.entries(data)
             keyClass = '';
         }
 
-        return isHidden ? null : <Fragment key={key}>
-        <div
-                className={classNames(`key__${key}`, keyClass, {
-                    'font-weight-bold': isBoolean && value === true,
-                })}>
-            <Trans>{isButton ? value : key}</Trans>
-        </div>
-        <div className={`value__${key} text-pre text-truncate`}>
-            <Trans>{(isTitle || isButton || isBoolean) ? '' : value || '—'}</Trans>
-        </div>
-    </Fragment>;
+        return isHidden ? null : <div key={key}>
+            <div
+                    className={classNames(`key__${key}`, keyClass, {
+                        'font-weight-bold': isBoolean && value === true,
+                    })}>
+                <Trans>{isButton ? value : key}</Trans>
+            </div>
+            <div className={`value__${key} text-pre text-truncate`}>
+                <Trans>{(isTitle || isButton || isBoolean) ? '' : value || '—'}</Trans>
+            </div>
+        </div>;
     });
 
 const Logs = () => {

@@ -7,7 +7,7 @@ import propTypes from 'prop-types';
 import { checkFiltered } from '../../../helpers/helpers';
 import { BLOCK_ACTIONS } from '../../../helpers/constants';
 import { toggleBlocking } from '../../../actions';
-import getIconTooltip from './getIconTooltip';
+import IconTooltip from './IconTooltip';
 import { renderFormattedClientCell } from '../../../helpers/renderFormattedClientCell';
 
 const ClientCell = ({
@@ -72,16 +72,9 @@ const ClientCell = ({
     };
 
     return <div className="o-hidden h-100 logs__cell logs__cell--client" role="gridcell">
-        {getIconTooltip({
-            className: hintClass,
-            columnClass: 'grid grid--limited',
-            tooltipClass: 'px-5 pb-5 pt-4 mw-75',
-            xlinkHref: 'question',
-            contentItemClass: 'text-truncate key-colon',
-            title: 'client_details',
-            content: processedData,
-            placement: 'bottom',
-        })}
+        <IconTooltip className={hintClass} columnClass='grid grid--limited' tooltipClass='px-5 pb-5 pt-4 mw-75'
+                     xlinkHref='question' contentItemClass="contentItemClass" title="client_details"
+                     content={processedData} placement="bottom" />
         <div className={nameClass}>
             <div data-tip={true} data-for={id}>
                 {renderFormattedClientCell(client, info, isDetailed, true)}
