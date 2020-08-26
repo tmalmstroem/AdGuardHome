@@ -210,7 +210,7 @@
     visibility: hidden;
 }
 
-.logs__row {
+.logs__table .logs__row {
     border-bottom: 2px solid var(--gray);
 }
 
