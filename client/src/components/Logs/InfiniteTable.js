@@ -1,5 +1,4 @@
 import React, {
-    useCallback,
     useEffect,
     useRef,
     useState,
@@ -23,54 +22,36 @@ const InfiniteTable = ({
     const dispatch = useDispatch();
     const firstElementRef = useRef(null);
     const [renderLimitIdx, setRenderLimitIdx] = useState(QUERY_LOGS_PAGE_SIZE);
-    const [pageYOffset, setPageYOffset] = useState(window.pageYOffset);
-    const loader = useRef(null);
+    const pageYOffset = useRef(window.pageYOffset);
 
     const {
         isEntireLog,
         processingGetLogs,
     } = useSelector((state) => state.queryLogs, shallowEqual);
 
-    const loadMore = useCallback((entries) => {
-        const [target] = entries;
-        if (target.isIntersecting && !processingGetLogs) {
-            setRenderLimitIdx((idx) => idx + QUERY_LOGS_PAGE_SIZE);
-            const isDivisible = renderLimitIdx % QUERY_LOGS_PAGE_LIMIT === 0;
-            if (isDivisible) {
-                dispatch(getLogs());
-            }
-            window.scrollTo(0, pageYOffset);
-        }
-    }, [processingGetLogs, pageYOffset, renderLimitIdx, getLogs]);
-
-
-    useEffect(() => {
-        const observer = new IntersectionObserver(loadMore, { threshold: 0 });
-
-        if (loader.current) {
-            observer.observe(loader.current);
-        }
-
-        return () => {
-            if (loader.current) {
-                observer.unobserve(loader.current);
-            }
-        };
-    }, [loader, loadMore]);
-
     useEffect(() => {
         const THROTTLE_TIME = 50;
         const EVENT_TYPE = 'scroll';
 
         const listener = throttle(() => {
-            setPageYOffset(window.pageYOffset);
+            pageYOffset.current = window.pageYOffset;
+            if ((window.scrollY + window.innerHeight) === document.body.scrollHeight) {
+                setRenderLimitIdx((idx) => idx + QUERY_LOGS_PAGE_SIZE);
+                window.scrollTo(0, pageYOffset.current);
+
+                const isDivisible = renderLimitIdx % QUERY_LOGS_PAGE_LIMIT === 0;
+
+                if (isDivisible) {
+                    dispatch(getLogs());
+                }
+            }
         }, THROTTLE_TIME);
 
         window.addEventListener(EVENT_TYPE, listener);
         return () => {
             window.removeEventListener(EVENT_TYPE, listener);
         };
-    }, []);
+    }, [renderLimitIdx]);
 
     const Row = forwardRef(({
         rowProps,
@@ -105,7 +86,7 @@ const InfiniteTable = ({
             ? <label className="logs__no-data">{t('nothing_found')}</label>
             : <>{items.slice(0, renderLimitIdx).map(getRow)}
                     {items.length > 0 && !isEntireLog
-                    && <div className="text-center" ref={loader}>{t('loading_table_status')}</div>}
+                    && <div className="text-center">{t('loading_table_status')}</div>}
             </>}
     </div>;
 };
