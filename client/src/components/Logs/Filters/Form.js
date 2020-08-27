@@ -107,7 +107,7 @@ const Form = (props) => {
 
     const {
         response_status, search,
-    } = useSelector((state) => state.form[FORM_NAME.LOGS_FILTER].values, shallowEqual);
+    } = useSelector((state) => state?.form[FORM_NAME.LOGS_FILTER].values, shallowEqual);
 
     const [
         debouncedSearch,
@@ -198,5 +198,4 @@ Form.propTypes = {
 
 export default reduxForm({
     form: FORM_NAME.LOGS_FILTER,
-    enableReinitialize: true,
 })(Form);
