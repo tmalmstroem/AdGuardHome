@@ -148,6 +148,7 @@ lint: lint-js lint-go
 
 lint-js:
 	@echo Running js linter
+	npm --prefix client install
 	npm --prefix client run lint
 
 lint-go:
