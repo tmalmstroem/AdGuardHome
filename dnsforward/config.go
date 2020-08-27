@@ -87,6 +87,7 @@ type FilteringConfig struct {
 // TLSConfig is the TLS configuration for HTTPS, DNS-over-HTTPS, and DNS-over-TLS
 type TLSConfig struct {
 	TLSListenAddr  *net.TCPAddr `yaml:"-" json:"-"`
+	PortDoQ        uint16       `yaml:"-" json:"-"`
 	StrictSNICheck bool         `yaml:"strict_sni_check" json:"-"` // Reject connection if the client uses server name (in SNI) that doesn't match the certificate
 
 	CertificateChain string `yaml:"certificate_chain" json:"certificate_chain"` // PEM-encoded certificates chain
@@ -146,6 +147,14 @@ func (s *Server) createProxyConfig() (proxy.Config, error) {
 		RequestHandler:         s.handleDNSRequest,
 		EnableEDNSClientSubnet: s.conf.EnableEDNSClientSubnet,
 		MaxGoroutines:          int(s.conf.MaxGoroutines),
+	}
+
+	if s.conf.PortDoQ != 0 {
+		a := &net.UDPAddr{
+			IP:   s.conf.TCPListenAddr.IP,
+			Port: int(s.conf.PortDoQ),
+		}
+		proxyConfig.QUICListenAddr = []*net.UDPAddr{a}
 	}
 
 	if s.conf.CacheSize != 0 {

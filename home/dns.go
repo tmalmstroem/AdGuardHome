@@ -178,6 +178,7 @@ func generateServerConfig() dnsforward.ServerConfig {
 				Port: tlsConf.PortDNSOverTLS,
 			}
 		}
+		newconfig.PortDoQ = tlsConf.PortDNSOverQUIC
 	}
 	newconfig.TLSv12Roots = Context.tlsRoots
 	newconfig.TLSCiphers = Context.tlsCiphers
@@ -223,6 +224,11 @@ func getDNSAddresses() []string {
 
 		if tlsConf.PortDNSOverTLS != 0 {
 			addr := fmt.Sprintf("tls://%s:%d", tlsConf.ServerName, tlsConf.PortDNSOverTLS)
+			dnsAddresses = append(dnsAddresses, addr)
+		}
+
+		if tlsConf.PortDNSOverQUIC != 0 {
+			addr := fmt.Sprintf("quic://%s:%d", tlsConf.ServerName, tlsConf.PortDNSOverQUIC)
 			dnsAddresses = append(dnsAddresses, addr)
 		}
 	}
