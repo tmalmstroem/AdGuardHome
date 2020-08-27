@@ -5,7 +5,6 @@ import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import queryString from 'query-string';
 import classNames from 'classnames';
-import propTypes from 'prop-types';
 import {
     BLOCK_ACTIONS,
     SMALL_SCREEN_SIZE,
@@ -25,7 +24,6 @@ import {
 } from '../../actions/queryLogs';
 import { addSuccessToast } from '../../actions/toasts';
 import InfiniteTable from './InfiniteTable';
-import Row from './Cells';
 import './Logs.css';
 
 const processContent = (data, buttonType) => Object.entries(data)
@@ -161,26 +159,6 @@ const Logs = () => {
         setIsLoading(false);
     };
 
-    const renderRow = (({
-        rowProps,
-        style,
-        ref,
-    }) => <Row
-            ref={ref}
-            style={style}
-            rowProps={rowProps}
-            isSmallScreen={isSmallScreen}
-            setDetailedDataCurrent={setDetailedDataCurrent}
-            setButtonType={setButtonType}
-            setModalOpened={setModalOpened}
-    />);
-
-    renderRow.propTypes = {
-        rowProps: propTypes.object.isRequired,
-        style: propTypes.object,
-        ref: propTypes.object,
-    };
-
     const renderPage = () => <>
         <Filters
                 filter={{
@@ -195,7 +173,10 @@ const Logs = () => {
         <InfiniteTable
                 isLoading={isLoading}
                 items={logs}
-                renderRow={renderRow}
+                isSmallScreen={isSmallScreen}
+                setDetailedDataCurrent={setDetailedDataCurrent}
+                setButtonType={setButtonType}
+                setModalOpened={setModalOpened}
         />
         <Modal portalClassName='grid' isOpen={isSmallScreen && isModalOpened}
                onRequestClose={closeModal}

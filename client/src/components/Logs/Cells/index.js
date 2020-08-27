@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import React, { memo } from 'react';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
@@ -29,7 +29,7 @@ import ResponseCell from './ResponseCell';
 import ClientCell from './ClientCell';
 import '../Logs.css';
 
-const Row = forwardRef(({
+const Row = memo(({
     style,
     rowProps,
     rowProps: { reason },
@@ -37,7 +37,7 @@ const Row = forwardRef(({
     setDetailedDataCurrent,
     setButtonType,
     setModalOpened,
-}, ref) => {
+}) => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const dnssec_enabled = useSelector((state) => state.dnsConfig.dnssec_enabled);
@@ -150,13 +150,15 @@ const Row = forwardRef(({
             'logs__cell--detailed': isDetailed,
         });
 
-    return <div style={style} className={className} onClick={onClick} role="row" ref={ref}>
+    return <div style={style} className={className} onClick={onClick} role="row">
         <DateCell {...rowProps} />
         <DomainCell {...rowProps} />
         <ResponseCell {...rowProps} />
         <ClientCell {...rowProps} />
     </div>;
 });
+
+Row.displayName = 'Row';
 
 Row.propTypes = {
     style: propTypes.object,

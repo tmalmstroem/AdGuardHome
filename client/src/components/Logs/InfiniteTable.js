@@ -2,7 +2,6 @@ import React, {
     useEffect,
     useRef,
     useState,
-    forwardRef,
 } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
@@ -12,15 +11,18 @@ import Loading from '../ui/Loading';
 import Header from './Cells/Header';
 import { getLogs } from '../../actions/queryLogs';
 import { QUERY_LOGS_PAGE_LIMIT, QUERY_LOGS_PAGE_SIZE } from '../../helpers/constants';
+import Row from './Cells';
 
 const InfiniteTable = ({
     isLoading,
-    renderRow,
     items,
+    isSmallScreen,
+    setDetailedDataCurrent,
+    setButtonType,
+    setModalOpened,
 }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
-    const firstElementRef = useRef(null);
     const [renderLimitIdx, setRenderLimitIdx] = useState(QUERY_LOGS_PAGE_SIZE);
     const pageYOffset = useRef(window.pageYOffset);
 
@@ -53,48 +55,34 @@ const InfiniteTable = ({
         };
     }, [renderLimitIdx]);
 
-    const Row = forwardRef(({
-        rowProps,
-        style,
-    }, ref) => renderRow({
-        rowProps,
-        style,
-        ref,
-    }));
-
-    Row.displayName = 'Row';
-
-    Row.propTypes = {
-        rowProps: propTypes.object.isRequired,
-        style: propTypes.object,
-    };
-
-    const getRow = (row, idx) => {
-        const newStartElementIdx = renderLimitIdx - QUERY_LOGS_PAGE_SIZE;
-
-        return <Row
-                key={`${row.time} ${row.domain}`}
-                rowProps={row}
-                ref={idx === newStartElementIdx ? firstElementRef : null}
-        />;
-    };
+    const renderRow = (row, idx) => <Row
+                    key={idx}
+                    rowProps={row}
+                    isSmallScreen={isSmallScreen}
+                    setDetailedDataCurrent={setDetailedDataCurrent}
+                    setButtonType={setButtonType}
+                    setModalOpened={setModalOpened}
+            />;
 
     return <div className='logs__table' role='grid'>
         {(isLoading || processingGetLogs) && <Loading />}
         <Header />
         {items.length === 0 && !processingGetLogs
             ? <label className="logs__no-data">{t('nothing_found')}</label>
-            : <>{items.slice(0, renderLimitIdx).map(getRow)}
-                    {items.length > 0 && !isEntireLog
-                    && <div className="text-center">{t('loading_table_status')}</div>}
+            : <>{items.slice(0, renderLimitIdx).map(renderRow)}
+                    {items.length > QUERY_LOGS_PAGE_SIZE && !isEntireLog
+                    && <div className="logs__loading text-center">{t('loading_table_status')}</div>}
             </>}
     </div>;
 };
 
 InfiniteTable.propTypes = {
     isLoading: propTypes.bool.isRequired,
-    renderRow: propTypes.func.isRequired,
     items: propTypes.array.isRequired,
+    isSmallScreen: propTypes.bool.isRequired,
+    setDetailedDataCurrent: propTypes.func.isRequired,
+    setButtonType: propTypes.func.isRequired,
+    setModalOpened: propTypes.func.isRequired,
 };
 
 export default InfiniteTable;
