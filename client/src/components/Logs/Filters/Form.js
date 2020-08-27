@@ -12,7 +12,7 @@ import {
     RESPONSE_FILTER,
     RESPONSE_FILTER_QUERIES,
 } from '../../../helpers/constants';
-import { setLogsFilter } from '../../../actions/queryLogs';
+import { setInitialRenderLimitIdx, setLogsFilter } from '../../../actions/queryLogs';
 import useDebounce from '../../../helpers/useDebounce';
 import { createOnBlurHandler, getLogsUrlParams } from '../../../helpers/helpers';
 import Tooltip from '../../ui/Tooltip';
@@ -121,6 +121,7 @@ const Form = (props) => {
         }));
 
         history.replace(`${getLogsUrlParams(debouncedSearch, response_status)}`);
+        dispatch(setInitialRenderLimitIdx());
     }, [response_status, debouncedSearch]);
 
     if (response_status && !(response_status in RESPONSE_FILTER_QUERIES)) {

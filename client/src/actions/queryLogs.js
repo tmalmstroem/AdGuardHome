@@ -5,6 +5,7 @@ import { normalizeLogs, getParamsForClientsSearch, addClientInfo } from '../help
 import {
     DEFAULT_LOGS_FILTER,
     QUERY_LOGS_PAGE_LIMIT,
+    QUERY_LOGS_PAGE_SIZE,
 } from '../helpers/constants';
 import { addErrorToast, addSuccessToast } from './toasts';
 
@@ -71,6 +72,11 @@ const checkFilteredLogs = async (data, filter, dispatch, total) => {
 };
 
 export const toggleDetailedLogs = createAction('TOGGLE_DETAILED_LOGS');
+export const setRenderLimitIdx = createAction('SET_LOGS_RENDER_INDEX');
+
+export const setInitialRenderLimitIdx = () => (dispatch) => {
+    dispatch(setRenderLimitIdx(QUERY_LOGS_PAGE_SIZE));
+};
 
 export const getLogsRequest = createAction('GET_LOGS_REQUEST');
 export const getLogsFailure = createAction('GET_LOGS_FAILURE');

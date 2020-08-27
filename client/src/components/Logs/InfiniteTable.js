@@ -1,7 +1,6 @@
 import React, {
     useEffect,
     useRef,
-    useState,
 } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
@@ -9,7 +8,7 @@ import propTypes from 'prop-types';
 import throttle from 'lodash/throttle';
 import Loading from '../ui/Loading';
 import Header from './Cells/Header';
-import { getLogs } from '../../actions/queryLogs';
+import { getLogs, setRenderLimitIdx } from '../../actions/queryLogs';
 import { QUERY_LOGS_PAGE_LIMIT, QUERY_LOGS_PAGE_SIZE } from '../../helpers/constants';
 import Row from './Cells';
 import { isScrolledIntoView } from '../../helpers/helpers';
@@ -24,7 +23,7 @@ const InfiniteTable = ({
 }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
-    const [renderLimitIdx, setRenderLimitIdx] = useState(QUERY_LOGS_PAGE_SIZE);
+    const renderLimitIdx = useSelector((state) => state.queryLogs.renderLimitIdx);
     const loader = useRef(null);
 
     const {
@@ -38,7 +37,7 @@ const InfiniteTable = ({
 
         const listener = throttle(() => {
             if (loader.current && isScrolledIntoView(loader.current)) {
-                setRenderLimitIdx((idx) => idx + QUERY_LOGS_PAGE_SIZE);
+                dispatch(setRenderLimitIdx(renderLimitIdx + QUERY_LOGS_PAGE_SIZE));
 
                 const isDivisible = renderLimitIdx % QUERY_LOGS_PAGE_LIMIT === 0;
 
@@ -69,7 +68,8 @@ const InfiniteTable = ({
         {items.length === 0 && !processingGetLogs
             ? <label className="logs__no-data">{t('nothing_found')}</label>
             : <>{items.slice(0, renderLimitIdx).map(renderRow)}
-                    {items.length > QUERY_LOGS_PAGE_SIZE && !isEntireLog
+                    {items.length >= renderLimitIdx
+                    && !isEntireLog
                     && <div ref={loader} className="logs__loading text-center">{t('loading_table_status')}</div>}
             </>}
     </div>;

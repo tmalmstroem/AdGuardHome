@@ -293,3 +293,11 @@
     display: flex;
     justify-content: space-between;
 }
+
+.logs__table .loading:after {
+    top: 10%;
+}
+
+.logs__table .loading:before {
+    min-height: 100%;
+}

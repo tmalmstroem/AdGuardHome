@@ -17,12 +17,10 @@ import { getClients } from '../../actions';
 import { getDnsConfig } from '../../actions/dnsConfig';
 import {
     getLogsConfig,
-    refreshFilteredLogs,
     resetFilteredLogs,
     setFilteredLogs,
     toggleDetailedLogs,
 } from '../../actions/queryLogs';
-import { addSuccessToast } from '../../actions/toasts';
 import InfiniteTable from './InfiniteTable';
 import './Logs.css';
 
@@ -150,15 +148,6 @@ const Logs = () => {
         };
     }, []);
 
-    const refreshLogs = async () => {
-        setIsLoading(true);
-        await Promise.all([
-            dispatch(refreshFilteredLogs()),
-        ]);
-        dispatch(addSuccessToast('query_log_updated'));
-        setIsLoading(false);
-    };
-
     const renderPage = () => <>
         <Filters
                 filter={{
@@ -168,7 +157,6 @@ const Logs = () => {
                 setIsLoading={setIsLoading}
                 processingGetLogs={processingGetLogs}
                 processingAdditionalLogs={processingAdditionalLogs}
-                refreshLogs={refreshLogs}
         />
         <InfiniteTable
                 isLoading={isLoading}

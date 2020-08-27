@@ -1,10 +1,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
+import { useDispatch } from 'react-redux';
 import Form from './Form';
+import { refreshFilteredLogs, setInitialRenderLimitIdx } from '../../../actions/queryLogs';
+import { addSuccessToast } from '../../../actions/toasts';
 
-const Filters = ({ filter, refreshLogs, setIsLoading }) => {
+const Filters = ({ filter, setIsLoading }) => {
     const { t } = useTranslation();
+    const dispatch = useDispatch();
+
+    const refreshLogs = async () => {
+        setIsLoading(true);
+        await dispatch(refreshFilteredLogs());
+        dispatch(addSuccessToast('query_log_updated'));
+        dispatch(setInitialRenderLimitIdx());
+        setIsLoading(false);
+    };
 
     return <div className="page-header page-header--logs">
         <h1 className="page-title page-title--large">
@@ -29,7 +41,6 @@ const Filters = ({ filter, refreshLogs, setIsLoading }) => {
 
 Filters.propTypes = {
     filter: PropTypes.object.isRequired,
-    refreshLogs: PropTypes.func.isRequired,
     processingGetLogs: PropTypes.bool.isRequired,
     setIsLoading: PropTypes.func.isRequired,
 };
