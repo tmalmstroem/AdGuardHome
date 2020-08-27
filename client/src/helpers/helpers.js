@@ -824,3 +824,11 @@ export const enrichWithConcatenatedIpAddresses = (interfaces) => Object.entries(
         acc[k].ip_addresses = ipv4_addresses.concat(ipv6_addresses);
         return acc;
     }, interfaces);
+
+export const isScrolledIntoView = (el) => {
+    const rect = el.getBoundingClientRect();
+    const elemTop = rect.top;
+    const elemBottom = rect.bottom;
+
+    return elemTop < window.innerHeight && elemBottom >= 0;
+};
