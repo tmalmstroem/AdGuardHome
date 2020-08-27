@@ -62,14 +62,17 @@ const InfiniteTable = ({
                     setModalOpened={setModalOpened}
             />;
 
+    const loading = isLoading || processingGetLogs;
+
     return <div className='logs__table' role='grid'>
-        {(isLoading || processingGetLogs) && <Loading />}
+        {loading && <Loading />}
         <Header />
         {items.length === 0 && !processingGetLogs
             ? <label className="logs__no-data">{t('nothing_found')}</label>
             : <>{items.slice(0, renderLimitIdx).map(renderRow)}
                     {items.length >= renderLimitIdx
                     && !isEntireLog
+                    && !loading
                     && <div ref={loader} className="logs__loading text-center">{t('loading_table_status')}</div>}
             </>}
     </div>;
