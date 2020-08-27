@@ -172,13 +172,20 @@ func generateServerConfig() dnsforward.ServerConfig {
 	Context.tls.WriteDiskConfig(&tlsConf)
 	if tlsConf.Enabled {
 		newconfig.TLSConfig = tlsConf.TLSConfig
+
 		if tlsConf.PortDNSOverTLS != 0 {
 			newconfig.TLSListenAddr = &net.TCPAddr{
 				IP:   net.ParseIP(config.DNS.BindHost),
 				Port: tlsConf.PortDNSOverTLS,
 			}
 		}
-		newconfig.PortDoQ = tlsConf.PortDNSOverQUIC
+
+		if tlsConf.PortDNSOverQUIC != 0 {
+			newconfig.QUICListenAddr = &net.UDPAddr{
+				IP:   net.ParseIP(config.DNS.BindHost),
+				Port: int(tlsConf.PortDNSOverQUIC),
+			}
+		}
 	}
 	newconfig.TLSv12Roots = Context.tlsRoots
 	newconfig.TLSCiphers = Context.tlsCiphers
