@@ -146,9 +146,8 @@ docker:
 
 lint: lint-js lint-go
 
-lint-js:
+lint-js: dependencies
 	@echo Running js linter
-	npm --prefix client install
 	npm --prefix client run lint
 
 lint-go:
@@ -166,6 +165,7 @@ ci: client_with_deps
 	$(MAKE) test
 
 dependencies:
+	npm --prefix client install
 	npm --prefix client ci
 	go mod download
 
