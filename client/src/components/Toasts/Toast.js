@@ -12,7 +12,7 @@ const Toast = ({
 }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
-    const [timerId, setTimedId] = useState(null);
+    const [timerId, setTimerId] = useState(null);
 
     const clearRemoveToastTimeout = () => clearTimeout(timerId);
     const removeCurrentToast = () => dispatch(removeToast(id));
@@ -20,7 +20,7 @@ const Toast = ({
         const timeout = TOAST_TIMEOUTS[type];
         const timerId = setTimeout(removeCurrentToast, timeout);
 
-        setTimedId(timerId);
+        setTimerId(timerId);
     };
 
     useEffect(() => {

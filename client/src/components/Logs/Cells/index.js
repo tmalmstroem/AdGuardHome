@@ -96,7 +96,7 @@ const Row = memo(({
 
         const sourceData = getSourceData(tracker);
 
-        const filter = getFilterName(filters, whitelistFilters, filterId, t);
+        const filter = getFilterName(filters, whitelistFilters, filterId);
 
         const detailedData = {
             time_table_header: formatTime(time, LONG_TIME_FORMAT),

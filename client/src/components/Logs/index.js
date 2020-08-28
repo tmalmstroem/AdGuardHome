@@ -138,6 +138,7 @@ const Logs = () => {
                 mediaQuery.removeEventListener('change', mediaQueryHandler);
             } catch (e1) {
                 try {
+                    // Safari 13.1 do not support mediaQuery.addEventListener('change', handler)
                     mediaQuery.removeListener(mediaQueryHandler);
                 } catch (e2) {
                     console.error(e2);

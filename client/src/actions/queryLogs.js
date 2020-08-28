@@ -39,13 +39,12 @@ export const getLogsRequest = createAction('GET_LOGS_REQUEST');
 export const getLogsFailure = createAction('GET_LOGS_FAILURE');
 export const getLogsSuccess = createAction('GET_LOGS_SUCCESS');
 
-export const getLogs = (config) => async (dispatch, getState) => {
+export const getLogs = () => async (dispatch, getState) => {
     dispatch(getLogsRequest());
     try {
         const { filter, oldest } = getState().queryLogs;
 
         const logs = await getLogsWithParams({
-            ...config,
             older_than: oldest,
             filter,
         });

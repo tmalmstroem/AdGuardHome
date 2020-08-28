@@ -33,7 +33,6 @@ const InfiniteTable = ({
 
     useEffect(() => {
         const THROTTLE_TIME = 100;
-        const EVENT_TYPE = 'scroll';
 
         const listener = throttle(() => {
             if (loader.current && isScrolledIntoView(loader.current)) {
@@ -47,9 +46,9 @@ const InfiniteTable = ({
             }
         }, THROTTLE_TIME);
 
-        window.addEventListener(EVENT_TYPE, listener);
+        window.addEventListener('scroll', listener);
         return () => {
-            window.removeEventListener(EVENT_TYPE, listener);
+            window.removeEventListener('scroll', listener);
         };
     }, [renderLimitIdx, loader]);
 
@@ -63,6 +62,7 @@ const InfiniteTable = ({
             />;
 
     const loading = isLoading || processingGetLogs;
+    const showLoaderFlag = items.length >= renderLimitIdx && !isEntireLog && !loading;
 
     return <div className='logs__table' role='grid'>
         {loading && <Loading />}
@@ -70,10 +70,7 @@ const InfiniteTable = ({
         {items.length === 0 && !processingGetLogs
             ? <label className="logs__no-data">{t('nothing_found')}</label>
             : <>{items.slice(0, renderLimitIdx).map(renderRow)}
-                    {items.length >= renderLimitIdx
-                    && !isEntireLog
-                    && !loading
-                    && <div ref={loader} className="logs__loading text-center">{t('loading_table_status')}</div>}
+                    {showLoaderFlag && <div ref={loader} className="logs__loading text-center">{t('loading_table_status')}</div>}
             </>}
     </div>;
 };

@@ -750,17 +750,21 @@ export const sortIp = (a, b) => {
  * @param {function} t - translate
  * @returns {string}
  */
-export const getFilterName = (filters, whitelistFilters, filterId, t) => {
+export const getFilterName = (
+    filters,
+    whitelistFilters,
+    filterId,
+    customFilterTranslationKey = 'custom_filter_rules',
+    resolveFilterName = (filter) => (filter ? filter.name : i18n.t('unknown_filter', { filterId })),
+) => {
     if (filterId === CUSTOM_FILTERING_RULES_ID) {
-        return t('custom_filter_rules');
+        return i18n.t(customFilterTranslationKey);
     }
 
     const matchIdPredicate = (filter) => filter.id === filterId;
     const filter = filters.find(matchIdPredicate) || whitelistFilters.find(matchIdPredicate);
 
-    const filterName = filter ? filter.name : t('unknown_filter', { filterId });
-
-    return filterName;
+    return resolveFilterName(filter);
 };
 
 /**

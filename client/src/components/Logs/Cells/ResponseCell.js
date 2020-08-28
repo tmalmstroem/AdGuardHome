@@ -31,10 +31,10 @@ const ResponseCell = ({
 
     const statusLabel = t(isBlockedByResponse ? 'blocked_by_cname_or_ip' : FILTERED_STATUS_TO_META_MAP[reason]?.LABEL || reason);
     const boldStatusLabel = <span className="font-weight-bold">{statusLabel}</span>;
-    const filter = getFilterName(filters, whitelistFilters, filterId, t);
+    const filter = getFilterName(filters, whitelistFilters, filterId);
 
     const renderResponses = (responseArr) => {
-        if (responseArr?.length === 0) {
+        if (!responseArr || responseArr.length === 0) {
             return '';
         }
 
