@@ -161,14 +161,14 @@ func (l *queryLog) parseSearchParams(r *http.Request) (*searchParams, error) {
 		if err != nil {
 			return nil, err
 		}
+	} else {
+		// If we don't use "olderThan" and use offset/limit instead, we should change the default behavior
+		// and scan all log records until we found enough log entries
+		p.maxFileScanEntries = 0
 	}
 
 	if limit, err := strconv.ParseInt(q.Get("limit"), 10, 64); err == nil {
 		p.limit = int(limit)
-
-		// If limit or offset are specified explicitly, we should change the default behavior
-		// and scan all log records until we found enough log entries
-		p.maxFileScanEntries = 0
 	}
 	if offset, err := strconv.ParseInt(q.Get("offset"), 10, 64); err == nil {
 		p.offset = int(offset)
