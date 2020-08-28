@@ -1,7 +1,7 @@
 import { handleActions } from 'redux-actions';
 
 import * as actions from '../actions/queryLogs';
-import { DEFAULT_LOGS_FILTER } from '../helpers/constants';
+import { DEFAULT_LOGS_FILTER, QUERY_LOGS_PAGE_SIZE } from '../helpers/constants';
 
 const queryLogs = handleActions(
     {
@@ -10,6 +10,11 @@ const queryLogs = handleActions(
         [actions.toggleDetailedLogs]: (state, { payload }) => ({
             ...state,
             isDetailed: payload,
+        }),
+
+        [actions.setRenderLimitIdx]: (state, { payload }) => ({
+            ...state,
+            renderLimitIdx: payload,
         }),
 
         [actions.setFilteredLogsSuccess]: (state, { payload }) => {
@@ -98,6 +103,7 @@ const queryLogs = handleActions(
         anonymize_client_ip: false,
         isDetailed: true,
         isEntireLog: false,
+        renderLimitIdx: QUERY_LOGS_PAGE_SIZE,
     },
 );
 
