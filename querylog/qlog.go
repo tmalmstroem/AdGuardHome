@@ -22,6 +22,8 @@ type queryLog struct {
 	lock    sync.Mutex
 	logFile string // path to the log file
 
+	oldestEntryTime uint64
+
 	bufferLock    sync.RWMutex
 	buffer        []*logEntry
 	fileFlushLock sync.Mutex // synchronize a file-flushing goroutine and main thread
