@@ -10,6 +10,7 @@ import (
 	"github.com/AdguardTeam/AdGuardHome/dnsfilter"
 	"github.com/AdguardTeam/golibs/log"
 	"github.com/miekg/dns"
+	"go.uber.org/atomic"
 )
 
 const (
@@ -22,7 +23,7 @@ type queryLog struct {
 	lock    sync.Mutex
 	logFile string // path to the log file
 
-	oldestEntryTime uint64
+	oldestEntryTime atomic.Int64
 
 	bufferLock    sync.RWMutex
 	buffer        []*logEntry

@@ -80,8 +80,8 @@ func (l *queryLog) flushToFile(buffer []*logEntry) error {
 
 	log.Debug("querylog: ok \"%s\": %v bytes written", filename, n)
 
-	if l.oldestEntryTime == 0xffffffffffffffff {
-		l.oldestEntryTime = uint64(buffer[0].Time.Unix())
+	if l.oldestEntryTime.Load() == -1 {
+		l.oldestEntryTime.Store(buffer[0].Time.Unix())
 	}
 
 	return nil
@@ -128,15 +128,15 @@ func (l *queryLog) readFileFirstTimeValue() {
 
 	log.Debug("querylog: the oldest log entry: %s", val)
 
-	l.oldestEntryTime = uint64(t.Unix())
+	l.oldestEntryTime.Store(t.Unix())
 }
 
 func (l *queryLog) periodicRotate() {
-	l.oldestEntryTime = 0xffffffffffffffff
+	l.oldestEntryTime.Store(-1)
 	l.readFileFirstTimeValue()
 
 	for {
-		if l.oldestEntryTime+uint64(l.conf.Interval)*24*60*60 <= uint64(time.Now().Unix()) {
+		if uint64(l.oldestEntryTime.Load())+uint64(l.conf.Interval)*24*60*60 <= uint64(time.Now().Unix()) {
 			_ = l.rotate()
 		}
 

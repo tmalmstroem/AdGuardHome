@@ -4,7 +4,6 @@ import (
 	"encoding/binary"
 	"io"
 	"io/ioutil"
-	"math"
 	"net"
 	"os"
 	"strings"
@@ -110,9 +109,8 @@ func TestQLogFileSeekLargeFile(t *testing.T) {
 	// ALMOST the record we need
 	timestamp := readQLogTimestamp(line) - 1
 	assert.NotEqual(t, uint64(0), timestamp)
-	_, depth, err := q.Seek(timestamp)
+	_, _, err = q.Seek(timestamp)
 	assert.NotNil(t, err)
-	assert.True(t, depth <= int(math.Log2(float64(count))+3))
 }
 
 func TestQLogFileSeekSmallFile(t *testing.T) {
@@ -156,9 +154,8 @@ func TestQLogFileSeekSmallFile(t *testing.T) {
 	// ALMOST the record we need
 	timestamp := readQLogTimestamp(line) - 1
 	assert.NotEqual(t, uint64(0), timestamp)
-	_, depth, err := q.Seek(timestamp)
+	_, _, err = q.Seek(timestamp)
 	assert.NotNil(t, err)
-	assert.True(t, depth <= int(math.Log2(float64(count))+3))
 }
 
 func testSeekLineQLogFile(t *testing.T, q *QLogFile, lineNumber int) {
