@@ -86,8 +86,8 @@ func (q *QLogFile) Seek(timestamp int64) (int64, int, error) {
 	end := fileInfo.Size()     // end of the search interval (position in the file)
 	probe := (end - start) / 2 // probe -- approximate index of the line we'll try to check
 	var line string
-	var lineIdx int64          // index of the probe line in the file
-	var lastProbeLineIdx int64 // index of the last probe line
+	var lineIdx int64   // index of the probe line in the file
+	var lastProbe int64 // index of the last probe line
 
 	// Count seek depth in order to detect mistakes
 	// If depth is too large, we should stop the search
@@ -102,6 +102,9 @@ func (q *QLogFile) Seek(timestamp int64) (int64, int, error) {
 
 		// Get the timestamp from the query log record
 		ts := readQLogTimestamp(line)
+		// log.Debug("probe:%d  lastProbe:%d  lineIdx:%d  ts:%s  timestamp:%s",
+		// 	probe, lastProbe, lineIdx, time.Unix(ts/1000000000, ts%1000000000).String(),
+		// 	time.Unix(timestamp/1000000000, timestamp%1000000000).String())
 
 		if ts == 0 {
 			return 0, depth, ErrSeekNotFound
@@ -112,27 +115,26 @@ func (q *QLogFile) Seek(timestamp int64) (int64, int, error) {
 			break
 		}
 
-		if lastProbeLineIdx == lineIdx {
+		if lastProbe == probe {
 			// If we're testing the same line twice then most likely
 			// the scope is too narrow and we won't find anything anymore
 			return 0, depth, ErrSeekNotFound
 		}
 
 		// Save the last found idx
-		lastProbeLineIdx = lineIdx
+		lastProbe = probe
 
 		// Narrow the scope and repeat the search
 		if ts > timestamp {
 			// If the timestamp we're looking for is OLDER than what we found
 			// Then the line is somewhere on the LEFT side from the current probe position
 			end = probe
-			probe = start + (end-start)/2
 		} else {
 			// If the timestamp we're looking for is NEWER than what we found
 			// Then the line is somewhere on the RIGHT side from the current probe position
-			start = probe
-			probe = start + (end-start)/2
+			start = probe + 1
 		}
+		probe = start + (end-start)/2
 
 		depth++
 		if depth >= 100 {
