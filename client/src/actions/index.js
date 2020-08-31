@@ -518,7 +518,7 @@ export const addStaticLease = (config) => async (dispatch) => {
         const name = config.hostname || config.ip;
         await apiClient.addStaticLease(config);
         dispatch(addStaticLeaseSuccess(config));
-        dispatch(addSuccessToast(i18next.t('dhcp_lease_added', { key: name })));
+        dispatch(addSuccessToast({ key: 'dhcp_lease_added', options: { key: name } }));
         dispatch(toggleLeaseModal());
     } catch (error) {
         dispatch(addErrorToast({ error }));
@@ -536,7 +536,7 @@ export const removeStaticLease = (config) => async (dispatch) => {
         const name = config.hostname || config.ip;
         await apiClient.removeStaticLease(config);
         dispatch(removeStaticLeaseSuccess(config));
-        dispatch(addSuccessToast(i18next.t('dhcp_lease_deleted', { key: name })));
+        dispatch(addSuccessToast({ key: 'dhcp_lease_deleted', options: { key: name } }));
     } catch (error) {
         dispatch(addErrorToast({ error }));
         dispatch(removeStaticLeaseFailure());

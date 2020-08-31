@@ -1,5 +1,4 @@
 import { createAction } from 'redux-actions';
-import i18next from 'i18next';
 import apiClient from '../api/Api';
 import { addErrorToast, addSuccessToast } from './toasts';
 
@@ -31,7 +30,7 @@ export const addRewrite = (config) => async (dispatch) => {
         dispatch(addRewriteSuccess(config));
         dispatch(toggleRewritesModal());
         dispatch(getRewritesList());
-        dispatch(addSuccessToast(i18next.t('rewrite_added', { key: config.domain })));
+        dispatch(addSuccessToast({ key: 'rewrite_added', options: { key: config.domain } }));
     } catch (error) {
         dispatch(addErrorToast({ error }));
         dispatch(addRewriteFailure());
@@ -48,7 +47,7 @@ export const deleteRewrite = (config) => async (dispatch) => {
         await apiClient.deleteRewrite(config);
         dispatch(deleteRewriteSuccess());
         dispatch(getRewritesList());
-        dispatch(addSuccessToast(i18next.t('rewrite_deleted', { key: config.domain })));
+        dispatch(addSuccessToast({ key: 'rewrite_deleted', options: { key: config.domain } }));
     } catch (error) {
         dispatch(addErrorToast({ error }));
         dispatch(deleteRewriteFailure());

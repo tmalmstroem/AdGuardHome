@@ -1,5 +1,4 @@
 import { createAction } from 'redux-actions';
-import i18next from 'i18next';
 import apiClient from '../api/Api';
 import { getClients } from './index';
 import { addErrorToast, addSuccessToast } from './toasts';
@@ -16,7 +15,7 @@ export const addClient = (config) => async (dispatch) => {
         await apiClient.addClient(config);
         dispatch(addClientSuccess());
         dispatch(toggleClientModal());
-        dispatch(addSuccessToast(i18next.t('client_added', { key: config.name })));
+        dispatch(addSuccessToast({ key: 'client_added', options: { key: config.name } }));
         dispatch(getClients());
     } catch (error) {
         dispatch(addErrorToast({ error }));
@@ -33,7 +32,7 @@ export const deleteClient = (config) => async (dispatch) => {
     try {
         await apiClient.deleteClient(config);
         dispatch(deleteClientSuccess());
-        dispatch(addSuccessToast(i18next.t('client_deleted', { key: config.name })));
+        dispatch(addSuccessToast({ key: 'client_deleted', options: { key: config.name } }));
         dispatch(getClients());
     } catch (error) {
         dispatch(addErrorToast({ error }));
@@ -53,7 +52,7 @@ export const updateClient = (config, name) => async (dispatch) => {
         await apiClient.updateClient(data);
         dispatch(updateClientSuccess());
         dispatch(toggleClientModal());
-        dispatch(addSuccessToast(i18next.t('client_updated', { key: name })));
+        dispatch(addSuccessToast({ key: 'client_updated', options: { key: name } }));
         dispatch(getClients());
     } catch (error) {
         dispatch(addErrorToast({ error }));
