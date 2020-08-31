@@ -344,6 +344,16 @@ const Icons = () => (
                 <path d="M60 54.5h8v40h-8zM60 35.5h8v8h-8z" />
             </svg>
         </symbol>
+
+        <symbol id="chevron-down" viewBox="0 0 24 24" stroke="currentColor"
+                strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff"
+                 strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                 className="feather feather-chevron-down">
+                <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+
+        </symbol>
     </svg>
 );
 

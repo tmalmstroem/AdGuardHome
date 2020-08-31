@@ -11,12 +11,16 @@ const IconTooltip = ({
     className,
     contentItemClass,
     columnClass,
+    triggerClass,
     canShowTooltip = true,
     xlinkHref,
     title,
     placement,
     tooltipClass,
     content,
+    trigger,
+    onVisibilityChange,
+    modifiers,
     renderContent = content ? React.Children.map(
         processContent(content),
         (item, idx) => <div key={idx} className={contentItemClass}>
@@ -36,6 +40,10 @@ const IconTooltip = ({
         className={tooltipClassName}
         content={tooltipContent}
         placement={placement}
+        triggerClass={triggerClass}
+        trigger={trigger}
+        onVisibilityChange={onVisibilityChange}
+        modifiers={modifiers}
     >
         {xlinkHref && <svg className={className}>
             <use xlinkHref={`#${xlinkHref}`} />
@@ -45,6 +53,8 @@ const IconTooltip = ({
 
 IconTooltip.propTypes = {
     className: PropTypes.string,
+    trigger: PropTypes.string,
+    triggerClass: PropTypes.string,
     contentItemClass: PropTypes.string,
     columnClass: PropTypes.string,
     tooltipClass: PropTypes.string,
@@ -57,6 +67,8 @@ IconTooltip.propTypes = {
         PropTypes.array,
     ]),
     renderContent: PropTypes.arrayOf(PropTypes.element),
+    onVisibilityChange: PropTypes.func,
+    modifiers: PropTypes.object,
 };
 
 export default IconTooltip;
