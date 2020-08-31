@@ -1887,6 +1887,8 @@ Check if host name is blocked by SB/PC service:
 
 ## ipset
 
+AGH can add IP addresses of the specified in configuration domain names to an ipset list.
+
 Prepare: user creates an ipset list and configures AGH for using it.
 
 	1. User --( ipset create my_ipset hash:ip ) -> OS
