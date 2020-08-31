@@ -69,6 +69,7 @@ Contents:
 	* API: Log out
 	* API: Get current user info
 * Safe services
+* ipset
 
 
 ## Relations between subsystems
@@ -1882,3 +1883,21 @@ Check if host name is blocked by SB/PC service:
 		sha256(host.com)[0..1] -> hashes[0],hashes[1],...
 		sha256(sub.host.com)[0..1] -> hashes[2],...
 		...
+
+
+## ipset
+
+Prepare: user creates an ipset list and configures AGH for using it.
+
+	1. User --( ipset create my_ipset hash:ip ) -> OS
+	2. User --( ipset: host.com,host2.com/my_ipset )-> AGH
+
+		Syntax:
+
+			ipset: "DOMAIN[,DOMAIN].../IPSET_NAME"
+
+Run-time: AGH adds IP addresses of a domain name to a corresponding ipset list.
+
+	1. AGH --( resolve host.com )-> upstream
+	2. AGH <-( host.com:[1.1.1.1,2.2.2.2] )-- upstream
+	3. AGH --( ipset.add(my_ipset, [1.1.1.1,2.2.2.2] ))-> OS

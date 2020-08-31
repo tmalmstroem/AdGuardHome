@@ -49,6 +49,7 @@ func (s *Server) handleDNSRequest(_ *proxy.Proxy, d *proxy.DNSContext) error {
 		processUpstream,
 		processDNSSECAfterResponse,
 		processFilteringAfterResponse,
+		processIPSEC,
 		processQueryLogsAndStats,
 	}
 	for _, process := range mods {
@@ -399,6 +400,87 @@ func processFilteringAfterResponse(ctx *dnsContext) int {
 		} else {
 			ctx.result = &dnsfilter.Result{}
 		}
+	}
+
+	return resultDone
+}
+
+// Convert configuration settings to an internal map
+// DOMAIN[,DOMAIN].../IPSET_NAME
+func (s *Server) initIPSET() {
+	s.ipsetList = make(map[string]string)
+	s.ipsetCache = make(map[[4]byte]bool)
+
+	nSets := 0
+	for _, it := range s.conf.IPSETList {
+		it = strings.TrimSpace(it)
+		hostsAndName := strings.Split(it, "/")
+		if len(hostsAndName) != 2 {
+			log.Debug("IPSET: invalid value '%s'", it)
+			continue
+		}
+		ipsetName := strings.TrimSpace(hostsAndName[1])
+		if ipsetName == "" {
+			log.Debug("IPSET: invalid value '%s'", it)
+			continue
+		}
+		nSets++
+		hosts := strings.Split(hostsAndName[0], ",")
+		for _, host := range hosts {
+			host = strings.TrimSpace(host)
+			host = strings.ToLower(host)
+			if host == "" {
+				log.Debug("IPSET: invalid value '%s'", it)
+				continue
+			}
+			s.ipsetList[host] = ipsetName
+		}
+	}
+	log.Debug("IPSET: added %d hosts;  ipsets:%d", len(s.ipsetList), nSets)
+}
+
+func processIPSEC(ctx *dnsContext) int {
+	s := ctx.srv
+	req := ctx.proxyCtx.Req
+	if req.Question[0].Qtype != dns.TypeA ||
+		!ctx.responseFromUpstream {
+		return resultDone
+	}
+
+	host := req.Question[0].Name
+	host = strings.TrimSuffix(host, ".")
+	host = strings.ToLower(host)
+	ipsetName, found := s.ipsetList[host]
+	if !found {
+		return resultDone
+	}
+
+	log.Debug("IPSET: found ipset %s for host %s", ipsetName, host)
+
+	for _, it := range ctx.proxyCtx.Res.Answer {
+		a, ok := it.(*dns.A)
+		if !ok {
+			continue
+		}
+
+		var ip4 [4]byte
+		copy(ip4[:], a.A.To4())
+		_, found := s.ipsetCache[ip4]
+		if found {
+			continue // this IP was added before
+		}
+		s.ipsetCache[ip4] = false
+
+		code, out, err := util.RunCommand("ipset", "add", ipsetName, a.A.String())
+		if err != nil {
+			log.Info("%s", err)
+			return resultDone
+		}
+		if code != 0 {
+			log.Info("IPSET: ipset add:  code:%d  output:'%s'", code, out)
+			return resultDone
+		}
+		log.Debug("IPSET: added %s(%s) -> %s", host, a.A.String(), ipsetName)
 	}
 
 	return resultDone

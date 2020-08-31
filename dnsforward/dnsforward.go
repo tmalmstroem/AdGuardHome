@@ -51,6 +51,9 @@ type Server struct {
 	stats      stats.Stats
 	access     *accessCtx
 
+	ipsetList  map[string]string // domain -> ipset_name
+	ipsetCache map[[4]byte]bool  // cache for IP[] to prevent duplicate calls to ipset program
+
 	tableHostToIP     map[string]net.IP // "hostname -> IP" table for internal addresses (DHCP)
 	tableHostToIPLock sync.Mutex
 
@@ -187,6 +190,8 @@ func (s *Server) Prepare(config *ServerConfig) error {
 	// 2. Set default values in the case if nothing is configured
 	// --
 	s.initDefaultSettings()
+
+	s.initIPSET()
 
 	// 3. Prepare DNS servers settings
 	// --

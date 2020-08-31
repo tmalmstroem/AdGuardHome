@@ -1060,3 +1060,31 @@ func TestPTRResponse(t *testing.T) {
 
 	s.Close()
 }
+
+func TestIPSET(t *testing.T) {
+	s := Server{}
+	s.conf.IPSETList = append(s.conf.IPSETList, "HOST.com/name")
+	s.conf.IPSETList = append(s.conf.IPSETList, "host2.com,host3.com/name23")
+	s.initIPSET()
+
+	assert.Equal(t, "name", s.ipsetList["host.com"])
+	assert.Equal(t, "name23", s.ipsetList["host2.com"])
+	assert.Equal(t, "name23", s.ipsetList["host3.com"])
+
+	_, ok := s.ipsetList["host4.com"]
+	assert.False(t, ok)
+
+	ctx := &dnsContext{
+		srv: &s,
+	}
+	ctx.proxyCtx = &proxy.DNSContext{}
+	ctx.proxyCtx.Req = &dns.Msg{
+		Question: []dns.Question{
+			{
+				Name:  "host.com.",
+				Qtype: dns.TypeA,
+			},
+		},
+	}
+	assert.Equal(t, resultDone, processIPSEC(ctx))
+}
