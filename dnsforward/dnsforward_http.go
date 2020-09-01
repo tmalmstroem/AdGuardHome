@@ -159,6 +159,11 @@ func (s *Server) handleSetConfig(w http.ResponseWriter, r *http.Request) {
 		restart = true
 	}
 
+	if js.Exists("upstream_dns_file") {
+		s.conf.UpstreamDNSFileName = req.UpstreamsFile
+		restart = true
+	}
+
 	if js.Exists("bootstrap_dns") {
 		s.conf.BootstrapDNS = req.Bootstraps
 		restart = true
