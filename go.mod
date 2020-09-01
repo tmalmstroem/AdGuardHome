@@ -23,6 +23,7 @@ require (
 	github.com/stretchr/testify v1.5.1
 	github.com/u-root/u-root v6.0.0+incompatible
 	go.etcd.io/bbolt v1.3.4
+	go.uber.org/atomic v1.6.0
 	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
 	golang.org/x/net v0.0.0-20200625001655-4c5254603344
 	golang.org/x/sys v0.0.0-20200519105757-fe76b779f299

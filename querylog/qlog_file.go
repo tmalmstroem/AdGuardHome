@@ -102,9 +102,6 @@ func (q *QLogFile) Seek(timestamp int64) (int64, int, error) {
 
 		// Get the timestamp from the query log record
 		ts := readQLogTimestamp(line)
-		// log.Debug("probe:%d  lastProbe:%d  lineIdx:%d  ts:%s  timestamp:%s",
-		// 	probe, lastProbe, lineIdx, time.Unix(ts/1000000000, ts%1000000000).String(),
-		// 	time.Unix(timestamp/1000000000, timestamp%1000000000).String())
 
 		if ts == 0 {
 			return 0, depth, ErrSeekNotFound
