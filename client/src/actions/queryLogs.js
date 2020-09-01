@@ -36,17 +36,22 @@ export const getAdditionalLogsRequest = createAction('GET_ADDITIONAL_LOGS_REQUES
 export const getAdditionalLogsFailure = createAction('GET_ADDITIONAL_LOGS_FAILURE');
 export const getAdditionalLogsSuccess = createAction('GET_ADDITIONAL_LOGS_SUCCESS');
 
-const checkFilteredLogs = async (data, filter, dispatch, getState, total) => {
+const shortPollQueryLogs = async (data, filter, dispatch, getState, total) => {
     const { logs, oldest } = data;
     const totalData = total || { logs };
 
-    const queryChanged = getState().form[FORM_NAME.LOGS_FILTER].values.search !== filter.search;
+    const queryForm = getState().form[FORM_NAME.LOGS_FILTER];
+    const previousQuery = queryForm && queryForm.values.search;
+    const currentQuery = filter.search;
+    const isQueryTheSame = typeof previousQuery === 'string'
+            && typeof currentQuery === 'string'
+            && previousQuery === currentQuery;
 
-    const needToGetAdditionalLogs = (logs.length < QUERY_LOGS_PAGE_LIMIT
+    const isShortPollingNeeded = (logs.length < QUERY_LOGS_PAGE_LIMIT
             || totalData.logs.length < QUERY_LOGS_PAGE_LIMIT)
-            && oldest !== '' && !queryChanged;
+            && oldest !== '' && isQueryTheSame;
 
-    if (needToGetAdditionalLogs) {
+    if (isShortPollingNeeded) {
         dispatch(getAdditionalLogsRequest());
 
         try {
@@ -55,7 +60,7 @@ const checkFilteredLogs = async (data, filter, dispatch, getState, total) => {
                 filter,
             });
             if (additionalLogs.oldest.length > 0) {
-                return await checkFilteredLogs(additionalLogs, filter, dispatch, getState, {
+                return await shortPollQueryLogs(additionalLogs, filter, dispatch, getState, {
                     logs: [...totalData.logs, ...additionalLogs.logs],
                     oldest: additionalLogs.oldest,
                 });
@@ -93,7 +98,7 @@ export const getLogs = () => async (dispatch, getState) => {
         });
 
         if (isFiltered) {
-            const additionalData = await checkFilteredLogs(data, filter, dispatch, getState);
+            const additionalData = await shortPollQueryLogs(data, filter, dispatch, getState);
             const updatedData = additionalData.logs ? { ...data, ...additionalData } : data;
             dispatch(getLogsSuccess(updatedData));
         } else {
@@ -127,7 +132,7 @@ export const setFilteredLogs = (filter) => async (dispatch, getState) => {
             older_than: '',
             filter,
         });
-        const additionalData = await checkFilteredLogs(data, filter, dispatch, getState);
+        const additionalData = await shortPollQueryLogs(data, filter, dispatch, getState);
         const updatedData = additionalData.logs ? { ...data, ...additionalData } : data;
 
         dispatch(setFilteredLogsSuccess({
