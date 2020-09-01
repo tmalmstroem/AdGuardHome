@@ -263,3 +263,24 @@ func prepareTestFiles(dir string, filesCount, linesCount int) []string {
 
 	return files
 }
+
+func TestSeek(t *testing.T) {
+	testDir := prepareTestDir()
+	defer func() { _ = os.RemoveAll(testDir) }()
+
+	d := `{"IP":"192.168.0.0","T":"2020-08-31T18:44:23.911246629+03:00","QH":"wfqvjymurpwegyv","QT":"A","QC":"IN","CP":"","Answer":"Bd2BgwABAAAAAQAAD3dmcXZqeW11cnB3ZWd5dgAAAQABAAAGAAEAAAeFAEABYQxyb290LXNlcnZlcnMDbmV0AAVuc3RsZAx2ZXJpc2lnbi1ncnMDY29tAHhoBZwAAAcIAAADhAAJOoAAAVGA","Result":{},"Elapsed":66286385,"Upstream":"tls://dns-unfiltered.adguard.com:853"}
+{"IP":"192.168.0.0","T":"2020-08-31T18:44:25.376690873+03:00","QH":"www.google.com","QT":"AAAA","QC":"IN","CP":"","Answer":"gjyBgAABAAEAAAAAA3d3dwZnb29nbGUDY29tAAAcAAHADAAcAAEAAABmABAqABRQQA4IAAAAAAAAACAE","Result":{},"Elapsed":43516146,"Upstream":"tls://dns-unfiltered.adguard.com:853"}
+{"T":"2020-08-31T18:44:25.382540454+03:00"}`
+	f, _ := ioutil.TempFile(testDir, "*.txt")
+	_, _ = f.WriteString(d)
+	defer f.Close()
+
+	q, err := NewQLogFile(f.Name())
+	assert.Nil(t, err)
+	defer q.Close()
+
+	target, _ := time.Parse(time.RFC3339, "2020-08-31T18:44:25.376690873+03:00")
+
+	_, _, err = q.Seek(target.UnixNano())
+	assert.Nil(t, err)
+}
