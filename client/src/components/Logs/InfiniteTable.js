@@ -1,4 +1,5 @@
 import React, {
+    useCallback,
     useEffect,
     useRef,
 } from 'react';
@@ -8,10 +9,10 @@ import propTypes from 'prop-types';
 import throttle from 'lodash/throttle';
 import Loading from '../ui/Loading';
 import Header from './Cells/Header';
-import { getLogs, setRenderLimitIdx } from '../../actions/queryLogs';
-import { QUERY_LOGS_PAGE_LIMIT, QUERY_LOGS_PAGE_SIZE } from '../../helpers/constants';
+import { getLogs } from '../../actions/queryLogs';
 import Row from './Cells';
 import { isScrolledIntoView } from '../../helpers/helpers';
+import { QUERY_LOGS_PAGE_LIMIT } from '../../helpers/constants';
 
 const InfiniteTable = ({
     isLoading,
@@ -23,7 +24,6 @@ const InfiniteTable = ({
 }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
-    const renderLimitIdx = useSelector((state) => state.queryLogs.renderLimitIdx);
     const loader = useRef(null);
 
     const {
@@ -31,26 +31,27 @@ const InfiniteTable = ({
         processingGetLogs,
     } = useSelector((state) => state.queryLogs, shallowEqual);
 
+    const loading = isLoading || processingGetLogs;
+
+    const listener = useCallback(() => {
+        if (loader.current && isScrolledIntoView(loader.current)) {
+            dispatch(getLogs());
+        }
+    }, [loader.current, isScrolledIntoView, getLogs]);
+
+    useEffect(() => {
+        listener();
+    }, [items.length < QUERY_LOGS_PAGE_LIMIT]);
+
     useEffect(() => {
         const THROTTLE_TIME = 100;
+        const throttledListener = throttle(listener, THROTTLE_TIME);
 
-        const listener = throttle(() => {
-            if (loader.current && isScrolledIntoView(loader.current)) {
-                dispatch(setRenderLimitIdx(renderLimitIdx + QUERY_LOGS_PAGE_SIZE));
-
-                const isDivisible = renderLimitIdx % QUERY_LOGS_PAGE_LIMIT === 0;
-
-                if (isDivisible) {
-                    dispatch(getLogs());
-                }
-            }
-        }, THROTTLE_TIME);
-
-        window.addEventListener('scroll', listener);
+        window.addEventListener('scroll', throttledListener);
         return () => {
-            window.removeEventListener('scroll', listener);
+            window.removeEventListener('scroll', throttledListener);
         };
-    }, [renderLimitIdx, loader]);
+    }, []);
 
     const renderRow = (row, idx) => <Row
                     key={idx}
@@ -61,15 +62,15 @@ const InfiniteTable = ({
                     setModalOpened={setModalOpened}
             />;
 
-    const loading = isLoading || processingGetLogs;
+    const isNothingFound = items.length === 0 && !processingGetLogs;
 
     return <div className='logs__table' role='grid'>
         {loading && <Loading />}
         <Header />
-        {items.length === 0 && !processingGetLogs
+        {isNothingFound
             ? <label className="logs__no-data">{t('nothing_found')}</label>
-            : <>{items.slice(0, renderLimitIdx).map(renderRow)}
-                    {!isEntireLog && <div ref={!loading ? loader : null} className="logs__loading text-center">{t('loading_table_status')}</div>}
+            : <>{items.map(renderRow)}
+                    {!isEntireLog && <div ref={loader} className="logs__loading text-center">{t('loading_table_status')}</div>}
             </>}
     </div>;
 };

@@ -307,8 +307,7 @@ export const DEFAULT_LOGS_FILTER = {
 
 export const DEFAULT_LANGUAGE = 'en';
 
-export const QUERY_LOGS_PAGE_SIZE = 20;
-export const QUERY_LOGS_PAGE_LIMIT = QUERY_LOGS_PAGE_SIZE;
+export const QUERY_LOGS_PAGE_LIMIT = 20;
 
 export const LEASES_TABLE_DEFAULT_PAGE_SIZE = 20;
 

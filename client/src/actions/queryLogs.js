@@ -4,7 +4,6 @@ import apiClient from '../api/Api';
 import { normalizeLogs, getParamsForClientsSearch, addClientInfo } from '../helpers/helpers';
 import {
     DEFAULT_LOGS_FILTER, FORM_NAME, QUERY_LOGS_PAGE_LIMIT,
-    QUERY_LOGS_PAGE_SIZE,
 } from '../helpers/constants';
 import { addErrorToast, addSuccessToast } from './toasts';
 
@@ -42,7 +41,7 @@ const shortPollQueryLogs = async (data, filter, dispatch, getState, total) => {
 
     const queryForm = getState().form[FORM_NAME.LOGS_FILTER];
     const currentQuery = queryForm && queryForm.values.search;
-    const previousQuery = filter.search;
+    const previousQuery = filter?.search;
     const isQueryTheSame = typeof previousQuery === 'string'
             && typeof currentQuery === 'string'
             && previousQuery === currentQuery;
@@ -78,11 +77,6 @@ const shortPollQueryLogs = async (data, filter, dispatch, getState, total) => {
 };
 
 export const toggleDetailedLogs = createAction('TOGGLE_DETAILED_LOGS');
-export const setRenderLimitIdx = createAction('SET_LOGS_RENDER_INDEX');
-
-export const setInitialRenderLimitIdx = () => (dispatch) => {
-    dispatch(setRenderLimitIdx(QUERY_LOGS_PAGE_SIZE));
-};
 
 export const getLogsRequest = createAction('GET_LOGS_REQUEST');
 export const getLogsFailure = createAction('GET_LOGS_FAILURE');

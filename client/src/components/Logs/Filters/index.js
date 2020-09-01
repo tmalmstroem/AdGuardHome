@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import Form from './Form';
-import { refreshFilteredLogs, setInitialRenderLimitIdx } from '../../../actions/queryLogs';
+import { refreshFilteredLogs } from '../../../actions/queryLogs';
 import { addSuccessToast } from '../../../actions/toasts';
 
 const Filters = ({ filter, setIsLoading }) => {
@@ -14,7 +14,6 @@ const Filters = ({ filter, setIsLoading }) => {
         setIsLoading(true);
         await dispatch(refreshFilteredLogs());
         dispatch(addSuccessToast('query_log_updated'));
-        dispatch(setInitialRenderLimitIdx());
         setIsLoading(false);
     };
 
