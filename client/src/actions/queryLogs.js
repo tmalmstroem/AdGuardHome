@@ -41,8 +41,8 @@ const shortPollQueryLogs = async (data, filter, dispatch, getState, total) => {
     const totalData = total || { logs };
 
     const queryForm = getState().form[FORM_NAME.LOGS_FILTER];
-    const previousQuery = queryForm && queryForm.values.search;
-    const currentQuery = filter.search;
+    const currentQuery = queryForm && queryForm.values.search;
+    const previousQuery = filter.search;
     const isQueryTheSame = typeof previousQuery === 'string'
             && typeof currentQuery === 'string'
             && previousQuery === currentQuery;
