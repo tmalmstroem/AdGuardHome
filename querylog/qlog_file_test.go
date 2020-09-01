@@ -264,7 +264,7 @@ func prepareTestFiles(dir string, filesCount, linesCount int) []string {
 	return files
 }
 
-func TestSeek(t *testing.T) {
+func TestQLogSeek(t *testing.T) {
 	testDir := prepareTestDir()
 	defer func() { _ = os.RemoveAll(testDir) }()
 
