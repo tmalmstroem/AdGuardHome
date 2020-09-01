@@ -836,3 +836,10 @@ export const isScrolledIntoView = (el) => {
 
     return elemTop < window.innerHeight && elemBottom >= 0;
 };
+
+/**
+ * @param value {*}
+ * @param key {string}
+ * @returns {{[key: string]: *}}
+ */
+export const wrapInObject = (value, key = 'key') => ({ [key]: value });

@@ -6,11 +6,12 @@ import {
 } from '../actions/toasts';
 import { removeToast } from '../actions';
 import { TOAST_TYPES } from '../helpers/constants';
+import { wrapInObject } from '../helpers/helpers';
 
 const toasts = handleActions({
-    [addErrorToast]: (state, { payload }) => {
-        const message = payload.error.toString();
-        console.error(message);
+    [addErrorToast]: (state, { payload: { error } }) => {
+        const message = wrapInObject(error.toString(), 'key');
+        console.error(error);
 
         const errorToast = {
             id: nanoid(),
@@ -22,9 +23,11 @@ const toasts = handleActions({
         return newState;
     },
     [addSuccessToast]: (state, { payload }) => {
+        const message = payload !== null && typeof payload === 'object' ? payload : wrapInObject(payload, 'key');
+
         const successToast = {
             id: nanoid(),
-            message: payload,
+            message,
             type: TOAST_TYPES.SUCCESS,
         };
 
@@ -32,9 +35,11 @@ const toasts = handleActions({
         return newState;
     },
     [addNoticeToast]: (state, { payload }) => {
+        const message = wrapInObject(payload.error.toString(), 'key');
+
         const noticeToast = {
             id: nanoid(),
-            message: payload.error.toString(),
+            message,
             type: TOAST_TYPES.NOTICE,
         };
 

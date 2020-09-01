@@ -27,7 +27,7 @@ const Toast = ({
         setRemoveToastTimeout();
     }, []);
 
-    const { key, options } = typeof message === 'object' && message !== null ? message : { key: message };
+    const { key, options } = message;
 
     return <div className={`toast toast--${type}`}
                 onMouseOver={clearRemoveToastTimeout}
@@ -45,7 +45,10 @@ const Toast = ({
 
 Toast.propTypes = {
     id: PropTypes.string.isRequired,
-    message: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
+    message: PropTypes.shape({
+        key: PropTypes.string.isRequired,
+        options: PropTypes.objectOf(PropTypes.string),
+    }),
     type: PropTypes.string.isRequired,
 };
 
